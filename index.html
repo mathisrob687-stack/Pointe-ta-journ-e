@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fin de chantier</title>
+<meta name="description" content="Vérifiez gratuitement que vos heures et vos heures sup ont bien été payées. Calendrier de paie, congés payés, absences, CDI, CDD, intérim et apprentissage.">
+<meta property="og:title" content="Fin de chantier · Vos heures, on vous les a toutes payées ?">
+<meta property="og:description" content="Vérifiez votre fiche de paie en une minute. Première vérification gratuite.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<link rel="canonical" href="https://fin-de-chantier.vercel.app/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Fin de chantier","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"fr","offers":[{"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},{"@type":"Offer","price":"2","priceCurrency":"EUR","name":"Plus, par mois"}]}
+</script>
+<style>
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.nav nav{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:500}
+.nav nav a{text-decoration:none;color:var(--muted)}
+.nav nav a:hover{color:var(--ink)}
+.nav .btn{min-height:42px;padding:10px 18px;font-size:15px}
+@media (max-width:760px){.nav nav a.hide-m{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding-block:56px 72px}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 60% at 30% 30%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 30% 30%,#000 20%,transparent 75%);opacity:.7;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start}
+@media (max-width:940px){.hero .wrap{grid-template-columns:1fr;gap:36px}.hero{padding-block:32px 56px}}
+.tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 12px 6px 8px;font-size:14px;font-weight:500}
+.tag i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px var(--good-soft)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,7.4vw,88px);line-height:.95;letter-spacing:-.035em;margin:22px 0 22px;text-wrap:balance}
+h1 .serif{font-size:1.06em;letter-spacing:-.01em;display:inline}
+.rise{display:inline-block;animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{transform:translateY(.35em);opacity:0}to{transform:none;opacity:1}}
+.lead{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:32em;margin:0 0 28px}
+.lead b{color:var(--ink);font-weight:600}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.proof{display:flex;gap:28px;flex-wrap:wrap;margin-top:36px;padding-top:24px;border-top:1px solid var(--line);max-width:34em}
+.proof div{display:flex;flex-direction:column}
+.proof b{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.proof span{font-size:14px;color:var(--muted)}
+
+/* formulaire gratuit */
+.check{background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:18px;position:relative}
+.check-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.check-head h2{font-family:var(--display);font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em}
+.free{background:var(--yellow);color:var(--yellow-ink);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps span{height:5px;border-radius:3px;background:var(--line);transition:background .3s}
+.steps span.on{background:var(--blue)}
+.step-title{display:flex;align-items:baseline;gap:10px}
+.step-title b{font-family:var(--display);font-size:19px}
+.step-title span{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.grid2{grid-template-columns:1fr}}
+.check .actions{display:flex;gap:10px;justify-content:space-between}
+.check .actions .btn{flex:1}
+.example{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.example::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--yellow)}
+.bignum{font-family:var(--display);font-weight:800;font-size:56px;letter-spacing:-.03em;line-height:1}
+.lock{display:flex;flex-direction:column;gap:14px}
+.lock .pad{width:44px;height:44px;border-radius:12px;background:var(--blue-soft);display:grid;place-items:center}
+.lock .pad svg{width:22px;height:22px;stroke:var(--blue);fill:none;stroke-width:2}
+.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:14px}
+
+/* bande chantier */
+.tape{background:var(--yellow);color:#0E1216;transform:rotate(-1.6deg);margin:10px -20px;overflow:hidden;border-block:3px solid #0E1216;position:relative;z-index:2}
+.tape .track{display:flex;gap:0;width:max-content;animation:slide 38s linear infinite}
+.tape span{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.02em;text-transform:uppercase;padding:12px 0;white-space:nowrap;display:flex;align-items:center}
+.tape span::after{content:"";width:34px;height:14px;margin:0 22px;background:repeating-linear-gradient(-45deg,#0E1216 0 5px,transparent 5px 10px)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* sections */
+section.s{padding-block:96px}
+@media (max-width:760px){section.s{padding-block:64px}}
+.s-head{max-width:720px;margin-bottom:48px}
+.s-head h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,56px);letter-spacing:-.03em;line-height:1;margin:10px 0 16px;text-wrap:balance}
+.s-head p{color:var(--muted);font-size:19px;margin:0}
+
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:n}
+@media (max-width:860px){.how{grid-template-columns:1fr}}
+.how article{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:10px;counter-increment:n}
+.how article::before{content:counter(n);font-family:var(--serif);font-style:italic;font-size:54px;line-height:.8;color:var(--blue)}
+.how h3{font-family:var(--display);font-size:22px;margin:0;letter-spacing:-.01em}
+.how p{margin:0;color:var(--muted)}
+
+/* fiche de paie annotée */
+.slip-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media (max-width:900px){.slip-wrap{grid-template-columns:1fr;gap:36px}}
+.slip{background:#FFFFFF;color:#1B1F24;border-radius:6px;box-shadow:var(--shadow),0 0 0 1px var(--line);padding:22px 22px 26px;font-size:13px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;transform:rotate(1.2deg);position:relative}
+.slip .top{display:flex;justify-content:space-between;border-bottom:2px solid #1B1F24;padding-bottom:10px;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.slip .top b{font-family:var(--display);font-size:16px;letter-spacing:.04em}
+.slip table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.slip th{text-align:left;font-weight:600;font-size:11px;color:#6B7280;padding:6px 4px;border-bottom:1px solid #D9DDE3}
+.slip td{padding:7px 4px;border-bottom:1px solid #EEF0F3}
+.slip td:not(:first-child),.slip th:not(:first-child){text-align:right}
+.slip tr.err td{background:rgba(194,56,15,.10);color:#B3330C;font-weight:700}
+.slip tr.net td{font-weight:800;border-top:2px solid #1B1F24;border-bottom:0;font-size:14px}
+.slip-scroll{overflow-x:auto;padding:14px}
+.note{position:absolute;right:-8px;top:46%;transform:translate(0,-50%) rotate(-2deg);background:var(--ink);color:var(--bg);font-family:var(--body);font-size:14px;line-height:1.35;padding:10px 12px;border-radius:10px;max-width:210px;box-shadow:var(--shadow)}
+@media (max-width:560px){.note{position:static;transform:none;margin-top:14px;max-width:none}}
+.ticks{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:16px}
+.ticks li{display:grid;grid-template-columns:28px 1fr;gap:12px}
+.ticks li::before{content:"";width:22px;height:22px;border-radius:50%;background:var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E1216' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/14px no-repeat;margin-top:2px}
+.ticks b{display:block;font-size:18px}
+.ticks span{color:var(--muted)}
+
+/* fonctionnalités */
+.feats{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.feat{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:12px;transition:transform .2s,box-shadow .2s;grid-column:span 2}
+.feat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.feat.wide{grid-column:span 3}
+@media (max-width:900px){.feats{grid-template-columns:1fr 1fr}.feat,.feat.wide{grid-column:span 1}}
+@media (max-width:600px){.feats{grid-template-columns:1fr}}
+.feat h3{font-family:var(--display);font-size:21px;margin:0;letter-spacing:-.01em}
+.feat p{margin:0;color:var(--muted);font-size:16px}
+.mini-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px}
+.mini-cal i{font-style:normal;aspect-ratio:1;border-radius:6px;background:var(--paper2);display:flex;align-items:flex-end;justify-content:flex-end;padding:3px;font-weight:600;color:var(--muted)}
+.mini-cal i.w{background:var(--blue-soft);color:var(--blue)}
+.mini-cal i.sup{background:var(--blue);color:var(--blue-ink)}
+.mini-cal i.cp{background:var(--hl);color:var(--ink)}
+.mini-cal i.ab{background:var(--bad-soft);color:var(--bad)}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.leg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.contract-pills{display:flex;flex-wrap:wrap;gap:6px}
+.contract-pills span{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;font-weight:600}
+.feat .stat{font-family:var(--display);font-weight:800;font-size:40px;letter-spacing:-.03em;line-height:1}
+
+/* congés */
+.cp{background:var(--ink);color:var(--bg);border-radius:28px;padding:clamp(24px,5vw,56px);display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media (max-width:860px){.cp{grid-template-columns:1fr}}
+.cp h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,4.6vw,52px);letter-spacing:-.03em;line-height:1;margin:10px 0 14px}
+.cp p{margin:0;opacity:.75}
+.cp .eyebrow{color:var(--yellow)}
+.cp-form{background:var(--paper);color:var(--ink);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.cp-out{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cp-out div{background:var(--paper2);border-radius:14px;padding:14px}
+.cp-out b{display:block;font-family:var(--display);font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.cp-out span{font-size:13px;color:var(--muted)}
+
+/* tarifs */
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:880px}
+@media (max-width:760px){.prices{grid-template-columns:1fr}}
+.price{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.price.plus{border:2px solid var(--blue);position:relative}
+.price.plus .badge{position:absolute;top:-13px;left:24px;background:var(--blue);color:var(--blue-ink);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:5px 11px}
+.price h3{font-family:var(--display);font-size:22px;margin:0}
+.price .amount{font-family:var(--display);font-weight:800;font-size:64px;letter-spacing:-.04em;line-height:.9}
+.price .amount small{font-size:18px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:4px}
+.price ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.price li{display:flex;gap:10px}
+.price li::before{content:"✓";font-weight:800;color:var(--blue)}
+.price li.no{color:var(--muted)}
+.price li.no::before{content:"–";color:var(--muted)}
+.price .btn{margin-top:auto}
+
+/* FAQ */
+.faq{max-width:820px;display:flex;flex-direction:column}
+.faq details{border-bottom:1px solid var(--line);padding-block:6px}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:16px;font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:28px;font-weight:400;transition:transform .25s;color:var(--muted)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 18px;color:var(--muted);max-width:62ch}
+
+/* fin */
+.final{text-align:center;padding-block:110px 90px}
+.final h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,80px);letter-spacing:-.04em;line-height:.95;margin:0 auto 26px;max-width:14ch;text-wrap:balance}
+footer{border-top:1px solid var(--line);padding-block:28px;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="mark" aria-hidden="true"></span>Fin de chantier</a>
+    <nav>
+      <a class="hide-m" href="#comment">Comment ça marche</a>
+      <a class="hide-m" href="#tarifs">Tarifs</a>
+      <a class="btn btn-blue" href="app.html">Ouvrir l'app</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="tag"><i></i>Première vérification gratuite</span>
+        <h1><span class="rise">Vos heures,</span> <span class="rise serif" style="animation-delay:.12s">on vous les a</span> <span class="rise hl" style="animation-delay:.24s">toutes payées&nbsp;?</span></h1>
+        <p class="lead">Notez vos journées, vos heures sup et vos absences. <b>Fin de chantier compare avec votre fiche de paie</b> et vous dit en euros ce qui manque.</p>
+        <div class="hero-cta">
+          <a class="btn btn-blue" href="#verifier">Vérifier ma paie <span class="arrow">→</span></a>
+          <a class="btn btn-line" href="app.html">Voir l'app</a>
+        </div>
+        <div class="proof">
+          <div><b>1 min</b><span>pour une vérification</span></div>
+          <div><b>+25 % / +50 %</b><span>heures sup calculées</span></div>
+          <div><b>2 €</b><span>par mois, sans engagement</span></div>
+        </div>
+      </div>
+
+      <div class="check" id="verifier" aria-live="polite">
+        <div class="check-head"><h2>Vérifier ma paie</h2><span class="free">Gratuit · 1 fois</span></div>
+        <div class="steps" aria-hidden="true"><span class="on"></span><span></span><span></span></div>
+
+        <form id="freeForm" novalidate>
+          <!-- étape 1 -->
+          <div class="step" data-step="1" style="display:flex;flex-direction:column;gap:16px">
+            <div class="step-title"><b>Votre contrat</b><span>Étape 1 sur 3</span></div>
+            <div class="field"><span class="lbl">Type de contrat</span>
+              <div class="chips" data-group="contrat">
+                <button type="button" class="chip" data-v="cdi" aria-pressed="true">CDI</button>
+                <button type="button" class="chip" data-v="cdd" aria-pressed="false">CDD</button>
+                <button type="button" class="chip" data-v="interim" aria-pressed="false">Intérim</button>
+                <button type="button" class="chip" data-v="apprenti" aria-pressed="false">Apprentissage</button>
+              </div>
+              <span class="hint" id="contratHint">Contrat à durée indéterminée</span>
+            </div>
+            <div class="field"><span class="lbl">Statut</span>
+              <div class="chips" data-group="statut">
+                <button type="button" class="chip" data-v="ouvrier" aria-pressed="true">Ouvrier</button>
+                <button type="button" class="chip" data-v="etam" aria-pressed="false">ETAM</button>
+                <button type="button" class="chip" data-v="cadre" aria-pressed="false">Cadre</button>
+              </div>
+            </div>
+            <div class="grid2">
+              <div class="field"><label for="fRate">Taux horaire brut</label><div class="unit"><input id="fRate" type="number" inputmode="decimal" step="0.01" min="0" value="13.20"><span>€</span></div></div>
+              <div class="field"><label for="fWeekly">Heures par semaine</label><div class="unit"><input id="fWeekly" type="number" inputmode="decimal" step="0.5" min="0" value="35"><span>h</span></div></div>
+            </div>
+            <span class="example">Exemple rempli, remplacez par vos chiffres</span>
+          </div>
+          <!-- étape 2 -->
+          <div class="step" data-step="2" hidden style="display:flex;flex-direction:column;gap:16px">
+            <div class="step-title"><b>Votre mois</b><span>Étape 2 sur 3</span></div>
+            <div class="field"><label for="fSup">Heures sup faites ce mois-ci</label><div class="unit"><input id="fSup" type="number" inputmode="decimal" step="0.5" min="0" value="17"><span>h</span></div><span class="hint">Tout ce qui dépasse vos heures du contrat.</span></div>
+            <div class="grid2">
+              <div class="field"><label for="fAbs">Jours d'absence non payée</label><input id="fAbs" type="number" inputmode="numeric" step="1" min="0" value="0"></div>
+              <div class="field"><label for="fPan">Jours avec panier repas</label><input id="fPan" type="number" inputmode="numeric" step="1" min="0" value="19"></div>
+            </div>
+            <div class="field"><label for="fPanAmt">Montant du panier</label><div class="unit"><input id="fPanAmt" type="number" inputmode="decimal" step="0.01" min="0" value="10.90"><span>€</span></div></div>
+          </div>
+          <!-- étape 3 -->
+          <div class="step" data-step="3" hidden style="display:flex;flex-direction:column;gap:16px">
+            <div class="step-title"><b>Votre fiche de paie</b><span>Étape 3 sur 3</span></div>
+            <div class="field"><label for="fSupPaid">Heures sup payées sur la fiche</label><div class="unit"><input id="fSupPaid" type="number" inputmode="decimal" step="0.25" min="0" value="13"><span>h</span></div><span class="hint">Additionnez les lignes « heures sup 25 % » et « 50 % ».</span></div>
+            <div class="field"><label for="fNet">Net à payer avant impôt</label><div class="unit"><input id="fNet" type="number" inputmode="decimal" step="0.01" min="0" value="1812"><span>€</span></div></div>
+          </div>
+          <div class="actions" style="margin-top:18px">
+            <button type="button" class="btn btn-line" id="prevStep" hidden>Retour</button>
+            <button type="submit" class="btn btn-blue" id="nextStep">Continuer <span class="arrow">→</span></button>
+          </div>
+        </form>
+
+        <div id="freeResult" hidden></div>
+
+        <div class="lock" id="freeLock" hidden>
+          <div class="pad"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+          <div><b style="font-family:var(--display);font-size:22px">Votre vérification gratuite est utilisée</b>
+          <p class="muted" style="margin:6px 0 0">Pour vérifier chaque mois et laisser l'IA lire votre fiche de paie, passez à Fin de chantier Plus.</p></div>
+          <a class="btn btn-blue" href="#tarifs">Passer à Plus · 2 €/mois</a>
+          <button class="btn btn-line" type="button" id="showLast">Revoir mon résultat</button>
+          <button class="linkbtn" type="button" id="resetFree">Réinitialiser la démo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tape" aria-hidden="true"><div class="track" id="tape"></div></div>
+
+  <section class="s" id="comment">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="eyebrow">Comment ça marche</span>
+        <h2>Trois gestes, <span class="serif">et vous savez.</span></h2>
+        <p>Pas besoin de comprendre une fiche de paie. On la lit pour vous.</p>
+      </div>
+      <div class="how">
+        <article><h3>Notez vos journées</h3><p>Un appui par jour : heures faites, heures sup, panier, congé ou absence. Le calendrier affiche ce que chaque jour vous rapporte.</p></article>
+        <article><h3>Ajoutez votre fiche</h3><p>Recopiez deux chiffres, ou prenez la fiche en photo avec Plus. L'IA retrouve les heures payées et les cotisations.</p></article>
+        <article><h3>Voyez l'écart en euros</h3><p>« Il vous manque 4 h sup, soit 58 € net. » Avec un message tout prêt pour le service paie.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" style="padding-top:0">
+    <div class="wrap slip-wrap">
+      <div class="slip-scroll">
+        <div class="slip" role="img" aria-label="Exemple de fiche de paie avec une ligne d'heures sup à 50 % non payée">
+          <div class="top"><b>BULLETIN DE PAIE</b><span>Période : 01/09/2026 – 30/09/2026</span></div>
+          <table>
+            <thead><tr><th>Désignation</th><th>Base</th><th>Taux</th><th>Montant</th></tr></thead>
+            <tbody>
+              <tr><td>Salaire de base</td><td>151,67</td><td>13,20</td><td>2 002,04</td></tr>
+              <tr><td>Heures sup 25 %</td><td>13,00</td><td>16,50</td><td>214,50</td></tr>
+              <tr class="err"><td>Heures sup 50 %</td><td>0,00</td><td>19,80</td><td>0,00</td></tr>
+              <tr><td>Indemnité panier</td><td>19</td><td>10,90</td><td>207,10</td></tr>
+              <tr><td>Cotisations salariales</td><td></td><td></td><td>−463,38</td></tr>
+              <tr class="net"><td>Net à payer</td><td></td><td></td><td>1 960,26</td></tr>
+            </tbody>
+          </table>
+          <div class="note"><b>4 h sup du samedi 19</b> ne sont pas payées. Il manque 79,20 € brut.</div>
+        </div>
+      </div>
+      <div>
+        <div class="s-head" style="margin-bottom:28px">
+          <span class="eyebrow">Ce que l'IA repère</span>
+          <h2>Les erreurs <span class="serif">qu'on ne voit pas</span> en fin de mois.</h2>
+        </div>
+        <ul class="ticks">
+          <li><div><b>Heures sup oubliées</b><span>Le samedi, le soir, la semaine où on a fini tard.</span></div></li>
+          <li><div><b>Mauvaise majoration</b><span>+25 % jusqu'à 8 h par semaine, +50 % au-delà.</span></div></li>
+          <li><div><b>Paniers et trajets manquants</b><span>Un jour oublié, c'est un repas perdu.</span></div></li>
+          <li><div><b>Primes de fin de contrat</b><span>En CDD et en intérim, 10 % de précarité et 10 % de congés.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" style="padding-top:0">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="eyebrow">Dans l'app</span>
+        <h2>Tout votre mois <span class="serif">sur un seul écran.</span></h2>
+      </div>
+      <div class="feats">
+        <article class="feat wide">
+          <h3>Le calendrier du mois</h3>
+          <p>Chaque jour affiche ce qu'il vous rapporte. Vous voyez d'un coup d'œil les heures sup, les congés et les absences.</p>
+          <div class="mini-cal" id="miniCal" aria-hidden="true"></div>
+          <div class="leg"><span style="--c:var(--blue-soft)">Travaillé</span><span style="--c:var(--blue)">Heures sup</span><span style="--c:var(--hl)">Congé</span><span style="--c:var(--bad-soft)">Absence</span></div>
+        </article>
+        <article class="feat wide">
+          <h3>Votre contrat, vos règles</h3>
+          <p>CDI, CDD, intérim ou apprentissage : les cotisations, la prime de précarité et l'indemnité de congés sont calculées pour vous.</p>
+          <div class="contract-pills"><span>CDI</span><span>CDD</span><span>Intérim</span><span>Apprentissage</span><span>Ouvrier</span><span>ETAM</span><span>Cadre</span></div>
+        </article>
+        <article class="feat"><span class="stat">+50 %</span><h3>Heures sup</h3><p>Ajoutez-les au jour près. La majoration se calcule par semaine.</p></article>
+        <article class="feat"><span class="stat">2,5 j</span><h3>Congés payés</h3><p>Les jours gagnés chaque mois, ceux posés, et leur valeur en euros.</p></article>
+        <article class="feat"><span class="stat">Oct.</span><h3>Prévision</h3><p>Avec Plus, l'estimation de votre paie du mois prochain.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" style="padding-top:0">
+    <div class="wrap">
+      <div class="cp">
+        <div>
+          <span class="eyebrow">Calcul gratuit</span>
+          <h2>Combien de jours de congés <span class="serif">vous reste-t-il&nbsp;?</span></h2>
+          <p>Vous gagnez 2,5 jours par mois travaillé, du 1er juin au 31 mai. Dans le BTP, c'est souvent la caisse des congés payés qui vous les verse.</p>
+        </div>
+        <div class="cp-form">
+          <div class="grid2">
+            <div class="field"><label for="cpStart">Date d'embauche</label><input id="cpStart" type="date" value="2025-03-10"></div>
+            <div class="field"><label for="cpTaken">Jours déjà posés</label><input id="cpTaken" type="number" min="0" step="1" value="5" inputmode="numeric"></div>
+          </div>
+          <div class="field"><label for="cpRate">Taux horaire brut</label><div class="unit"><input id="cpRate" type="number" min="0" step="0.01" value="13.20" inputmode="decimal"><span>€</span></div></div>
+          <div class="cp-out">
+            <div><b class="num" id="cpLeft">0 j</b><span id="cpLeftTxt">restants sur la période</span></div>
+            <div><b class="num" id="cpVal">0 €</b><span>valeur brute estimée</span></div>
+          </div>
+          <span class="hint" id="cpNote" style="font-size:13px;color:var(--muted)"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="tarifs" style="padding-top:0">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="eyebrow">Tarifs</span>
+        <h2>Moins cher <span class="serif">qu'un café par mois.</span></h2>
+        <p>Une heure sup oubliée vaut déjà huit mois d'abonnement.</p>
+      </div>
+      <div class="prices">
+        <article class="price">
+          <h3>Gratuit</h3>
+          <div class="amount num">0 €</div>
+          <ul>
+            <li>1 vérification complète de fiche de paie</li>
+            <li>Calendrier des heures et des absences</li>
+            <li>Calcul des congés payés</li>
+            <li class="no">Analyse IA de la fiche de paie</li>
+            <li class="no">Prévision du mois prochain</li>
+          </ul>
+          <a class="btn btn-line" href="#verifier">Faire ma vérification</a>
+        </article>
+        <article class="price plus">
+          <span class="badge">Le plus choisi</span>
+          <h3>Plus</h3>
+          <div class="amount num">2 €<small>/ mois</small></div>
+          <ul>
+            <li>Vérifications illimitées, chaque mois</li>
+            <li>L'IA lit votre fiche de paie en photo</li>
+            <li>Prévision de la paie du mois prochain</li>
+            <li>Alerte quand des heures sup manquent</li>
+            <li>Relevé PDF de vos heures pour votre employeur</li>
+          </ul>
+          <button class="btn btn-blue" type="button" id="goPlus">Essayer Plus <span class="arrow">→</span></button>
+          <span class="muted" style="font-size:13px;margin-top:-8px">Aperçu : le paiement n'est pas encore branché.</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" style="padding-top:0">
+    <div class="wrap">
+      <div class="s-head"><span class="eyebrow">Questions</span><h2>Les questions <span class="serif">qu'on nous pose.</span></h2></div>
+      <div class="faq">
+        <details><summary>Est-ce que mon patron peut voir mes heures&nbsp;?</summary><p>Non. Vos heures restent à vous. Vous choisissez si vous voulez en faire un relevé à montrer.</p></details>
+        <details><summary>Ça marche pour l'intérim et les CDD&nbsp;?</summary><p>Oui. Choisissez votre contrat : la prime de fin de contrat (10 %) et l'indemnité de congés payés (10 %) sont ajoutées au calcul.</p></details>
+        <details><summary>Les calculs sont-ils exacts&nbsp;?</summary><p>Ce sont des estimations basées sur les règles générales du Code du travail. Votre convention collective peut prévoir d'autres majorations ou primes. En cas de doute, montrez votre relevé au service paie ou à un délégué du personnel.</p></details>
+        <details><summary>Comment sont comptées les heures sup&nbsp;?</summary><p>Au-delà de 35 h par semaine, les 8 premières heures sont majorées de 25 %, les suivantes de 50 %. Elles ont aussi moins de cotisations, donc elles rapportent un peu plus en net.</p></details>
+        <details><summary>Je peux arrêter l'abonnement quand je veux&nbsp;?</summary><p>Oui, sans engagement. Vous gardez vos heures notées même sans abonnement.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>Chaque heure <span class="serif">mérite</span> son euro.</h2>
+      <a class="btn btn-blue" href="#verifier">Vérifier ma paie gratuitement <span class="arrow">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="logo" style="font-size:16px"><span class="mark" aria-hidden="true" style="width:20px;height:20px;border-radius:5px"></span>Fin de chantier</span>
+    <span>Estimations indicatives, ne remplacent pas un conseil juridique.</span>
+  </div>
+</footer>
+
+<script src="calc.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var F=window.FDC;
+var FREE_KEY='fdc-free-check';
+
+/* nav */
+var nav=$('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>8)},{passive:true});
+
+/* bande chantier */
+var words=['Heures sup du samedi','Paniers repas','Congés payés','Prime de précarité','Majoration +25 %','Majoration +50 %','Jours d\'absence','Net à payer'];
+var t=''; for(var k=0;k<2;k++) words.forEach(function(w){t+='<span>'+w+'</span>'});
+$('tape').innerHTML=t;
+
+/* mini calendrier d'illustration */
+(function(){
+  var types='  wwwwwsc wwsww.. wwwsw.. cccww.. awwww..'.replace(/ /g,'');
+  var html=''; ['L','M','M','J','V','S','D'].forEach(function(d){html+='<i style="background:none;justify-content:center;align-items:center;aspect-ratio:auto">'+d+'</i>'});
+  html+='<i style="visibility:hidden"></i>';
+  for(var d=1;d<=30;d++){var c=types[d-1]||'.'; var cls=c==='w'?'w':c==='s'?'sup':c==='c'?'cp':c==='a'?'ab':''; html+='<i class="'+cls+'">'+d+'</i>';}
+  $('miniCal').innerHTML=html;
+})();
+
+/* formulaire gratuit */
+var state={contrat:'cdi',statut:'ouvrier',step:1};
+document.querySelectorAll('[data-group]').forEach(function(g){
+  g.addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b) return;
+    g.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    state[g.dataset.group]=b.dataset.v;
+    if(g.dataset.group==='contrat') $('contratHint').textContent=F.CONTRATS[b.dataset.v].hint;
+  });
+});
+function num(id){var v=parseFloat(String($(id).value).replace(',','.'));return isNaN(v)?0:v}
+function showStep(n){
+  state.step=n;
+  document.querySelectorAll('.step').forEach(function(s){s.hidden=+s.dataset.step!==n});
+  document.querySelectorAll('.steps span').forEach(function(s,i){s.classList.toggle('on',i<n)});
+  $('prevStep').hidden=n===1;
+  $('nextStep').innerHTML=n===3?'Voir mon résultat <span class="arrow">→</span>':'Continuer <span class="arrow">→</span>';
+}
+$('prevStep').addEventListener('click',function(){showStep(state.step-1)});
+$('freeForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(state.step<3){showStep(state.step+1);return;}
+  var res=compute();
+  F.store.set(FREE_KEY,{used:true,result:res});
+  renderResult(res,true);
+});
+
+function compute(){
+  var rate=num('fRate'),weekly=num('fWeekly')||35,daily=weekly/5;
+  var weeks=4.33;
+  function split(h){var s25=Math.min(h,8*weeks);return{s25:s25,s50:Math.max(0,h-s25)}}
+  var common={rate:rate,weekly:weekly,daily:daily,contrat:state.contrat,statut:state.statut,absH:num('fAbs')*daily,paniers:num('fPan'),panierAmt:num('fPanAmt')};
+  var sf=split(num('fSup')), sp=split(num('fSupPaid'));
+  var due=F.computePay(Object.assign({},common,sf));
+  var paid=F.computePay(Object.assign({},common,sp));
+  return {contrat:state.contrat,statut:state.statut,supDone:num('fSup'),supPaid:num('fSupPaid'),netPaid:num('fNet'),due:due,hsGapNet:due.net-paid.net,hsGapBrut:due.brut-paid.brut};
+}
+
+function countUp(el,to){
+  var start=performance.now(),dur=900;
+  function f(now){var p=Math.min(1,(now-start)/dur);var e=1-Math.pow(1-p,3);el.textContent=F.eur0.format(to*e);if(p<1)requestAnimationFrame(f)}
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=F.eur0.format(to);return}
+  requestAnimationFrame(f);
+}
+
+function renderResult(r,animate){
+  $('freeForm').hidden=true; $('freeLock').hidden=true;
+  document.querySelector('.steps').hidden=true;
+  var d=r.due, supGap=r.supDone-r.supPaid, netGap=r.netPaid>0?d.net-r.netPaid:0;
+  var missing=Math.max(0,Math.max(r.hsGapNet,netGap));
+  var ko=missing>=15;
+  var html='<div class="eyebrow">Votre résultat · '+F.CONTRATS[r.contrat].label+', '+F.STATUTS[r.statut].label.toLowerCase()+'</div>';
+  if(ko){
+    html+='<div><div class="muted" style="font-size:15px">Il vous manque environ</div><div class="bignum num" style="color:var(--bad)" id="gapNum">'+F.eur0.format(missing)+'</div><div class="muted" style="font-size:15px">net sur ce mois</div></div>';
+    html+='<div class="verdict ko"><span class="t">'+(supGap>0.24?F.hours(supGap)+' sup non payées':'Net plus bas que prévu')+'</span><p>'+(supGap>0.24?'Vous avez fait '+F.hours(r.supDone)+', la fiche en paie '+F.hours(r.supPaid)+'. ':'')+'Parlez-en au service paie avec le détail ci-dessous.</p></div>';
+  }else{
+    html+='<div class="verdict ok"><span class="t">Tout semble bien payé ✓</span><p>Le net de votre fiche correspond à nos calculs, à '+F.eur0.format(Math.abs(netGap))+' près.</p></div>';
+  }
+  var L=function(a,b,cls){return '<div class="l'+(cls?' '+cls:'')+'"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
+  html+='<div class="lines">'+L('Salaire de base',F.eur2.format(d.base))+
+    L('Heures sup ('+F.hours(r.supDone)+')',F.eur2.format(d.hs))+
+    (d.abs?L('Absences non payées','−'+F.eur2.format(d.abs),'neg'):'')+
+    (d.precarite?L('Prime de précarité 10 %',F.eur2.format(d.precarite)):'')+
+    (d.icp?L('Indemnité de congés 10 %',F.eur2.format(d.icp)):'')+
+    L('Cotisations ('+Math.round(d.cotisRate*100)+' %)','−'+F.eur2.format(d.cotis),'neg')+
+    (d.paniers?L('Paniers repas',F.eur2.format(d.paniers)):'')+
+    L('Net attendu',F.eur2.format(d.net),'total')+
+    (r.netPaid?L('Net sur votre fiche',F.eur2.format(r.netPaid)):'')+'</div>';
+  html+='<a class="btn btn-blue" href="app.html">Suivre mes heures chaque jour <span class="arrow">→</span></a>';
+  html+='<p class="muted" style="font-size:13px;margin:0">Estimation selon les règles générales. Votre convention collective peut prévoir mieux.</p>';
+  var box=$('freeResult'); box.innerHTML=html; box.hidden=false; box.style.cssText='display:flex;flex-direction:column;gap:16px';
+  if(ko&&animate) countUp($('gapNum'),missing);
+}
+
+function showLock(){
+  $('freeForm').hidden=true; $('freeResult').hidden=true; document.querySelector('.steps').hidden=true; $('freeLock').hidden=false;
+}
+var saved=F.store.get(FREE_KEY,null);
+if(saved&&saved.used) showLock();
+$('showLast').addEventListener('click',function(){var s=F.store.get(FREE_KEY,null);if(s&&s.result)renderResult(s.result,false)});
+$('resetFree').addEventListener('click',function(){F.store.del(FREE_KEY);$('freeLock').hidden=true;$('freeResult').hidden=true;$('freeForm').hidden=false;document.querySelector('.steps').hidden=false;showStep(1)});
+
+/* congés payés */
+function cp(){
+  var today=new Date();today.setHours(12,0,0,0);
+  var sv=$('cpStart').value; var start=sv?F.parse(sv):null;
+  var a=F.cpAcquired(start,today); var taken=Math.max(0,parseFloat($('cpTaken').value)||0);
+  var rate=parseFloat(String($('cpRate').value).replace(',','.'))||0;
+  var left=Math.max(0,a.days-taken);
+  var dv=F.cpDayValue(rate,35,0);
+  $('cpLeft').textContent=left.toLocaleString('fr-FR')+' j';
+  $('cpLeftTxt').textContent='restants ('+a.days.toLocaleString('fr-FR')+' gagnés − '+taken+' posés)';
+  $('cpVal').textContent=F.eur0.format(left*dv.best);
+  $('cpNote').textContent='Période en cours depuis le '+a.from.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+', '+a.months+' mois terminés. En jours ouvrables (du lundi au samedi).';
+}
+['cpStart','cpTaken','cpRate'].forEach(function(id){$(id).addEventListener('input',cp)});
+cp();
+
+/* Plus */
+$('goPlus').addEventListener('click',function(){F.store.set('fdc-plus',true);location.href='app.html#paie'});
+})();
+</script>
+</body>
+</html>
