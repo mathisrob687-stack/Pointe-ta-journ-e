@@ -150,7 +150,19 @@
 
   var eur0 = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
   var eur2 = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  function hours(h) { return (Math.round(h * 100) / 100).toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + ' h'; }
+  // Durée affichée en heures et minutes : 0.5 → "00h30", 136 → "136h00"
+  function hours(h) {
+    var m = Math.round(Math.abs(h || 0) * 60), H = Math.floor(m / 60), M = m % 60;
+    return (h < 0 && m ? '−' : '') + (H < 10 ? '0' : '') + H + 'h' + (M < 10 ? '0' : '') + M;
+  }
+  // Lit "7h30", "7:30", "7,5" ou "7" et arrondit au quart d'heure
+  function parseHours(v) {
+    var t = String(v == null ? '' : v).trim().toLowerCase().replace(/\s+/g, ''), x;
+    var m = t.match(/^(\d{1,2})[h:](\d{0,2})$/);
+    if (m) x = Number(m[1]) + (Number(m[2] || 0)) / 60; else x = parseFloat(t.replace(',', '.'));
+    return isNaN(x) ? NaN : quarter(x);
+  }
+  function quarter(h) { return Math.max(0, Math.round(h * 4) / 4); }
 
   var store = {
     get: function (k, fallback) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } },
@@ -163,7 +175,7 @@
     cotisRate: cotisRate, caisseCP: caisseCP, contractHours: contractHours, monthlyBase: monthlyBase, contractMonthly: contractMonthly,
     splitWeek: splitWeek, splitMonth: splitMonth, computePay: computePay, SMIC_MOIS: SMIC_MOIS,
     cpPeriodStart: cpPeriodStart, cpAcquired: cpAcquired, cpDayValue: cpDayValue,
-    iso: iso, parse: parse, eur0: eur0, eur2: eur2, hours: hours, store: store,
+    iso: iso, parse: parse, eur0: eur0, eur2: eur2, hours: hours, parseHours: parseHours, quarter: quarter, store: store,
     MONTHS: ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']
   };
 })(window);
