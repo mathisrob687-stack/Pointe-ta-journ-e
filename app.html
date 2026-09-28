@@ -75,7 +75,9 @@ h3{font-family:var(--display);font-size:18px;margin:0}
 .stepper .txt span{font-size:13px;color:var(--muted)}
 .stepper .ctl{display:flex;align-items:center;gap:8px}
 .stepper button{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper2);font-size:24px;line-height:1}
-.stepper output{min-width:56px;text-align:center;font-family:var(--display);font-weight:800;font-size:28px}
+.stepper output,.stepper .hin{min-width:56px;text-align:center;font-family:var(--display);font-weight:800;font-size:28px}
+.stepper .hin{width:100px;padding:4px 2px;border:0;border-bottom:2px dashed var(--line);border-radius:0;background:transparent;color:var(--ink)}
+.stepper .hin:focus{outline:none;border-bottom-color:var(--blue)}
 .checkrow{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:14px}
 .checkrow input{width:24px;height:24px;accent-color:var(--blue)}
 .dayvalue{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
@@ -198,7 +200,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
       <div class="field"><label for="supDate">Jour</label><input type="date" id="supDate"></div>
       <div class="stepper">
         <div class="txt"><b>Heures sup</b><span>en plus de la journée</span></div>
-        <div class="ctl"><button type="button" data-sup="-0.25" aria-label="Moins un quart d'heure">−</button><output id="supAdd" class="num">01h00</output><button type="button" data-sup="0.25" aria-label="Plus un quart d'heure">+</button></div>
+        <div class="ctl"><button type="button" data-sup="-0.25" aria-label="Moins un quart d'heure">−</button><input id="supAdd" class="num hin" type="text" inputmode="text" autocomplete="off" value="01h00" aria-label="Heures sup, ex. 01h30"><button type="button" data-sup="0.25" aria-label="Plus un quart d'heure">+</button></div>
       </div>
       <button class="btn btn-blue block" id="supSave" type="button">Ajouter</button>
     </div>
@@ -550,9 +552,10 @@ function openDay(k){
     '<div class="dayvalue"><span class="muted" id="shValLbl">Ce jour vous rapporte environ</span><b class="num" id="shVal">0 €</b></div>'+
     '<div class="row"><button class="btn btn-blue" id="shSave" type="button">Enregistrer</button>'+(S.days[k]?'<button class="btn btn-danger" id="shDel" type="button">Effacer ce jour</button>':'<button class="btn btn-line" id="shCancel" type="button">Annuler</button>')+'</div></div></div>';
   function upd(){
-    $('o-n').textContent=F.hours(dr.n); $('o-s').textContent=F.hours(dr.s);
+    ['n','s'].forEach(function(f){var i=$('o-'+f);if(document.activeElement!==i)i.value=F.hours(dr[f])});
     $('shWork').hidden=dr.t!=='work';
-    host.querySelectorAll('#shType button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.t===dr.t?'true':'false')});
+    hoursInput(host.querySelectorAll('[data-in]'),function(i,v){dr[i.dataset.in]=Math.min(16,v);upd()},function(i){return dr[i.dataset.in]});
+  host.querySelectorAll('#shType button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.t===dr.t?'true':'false')});
     var btpCp=F.caisseCP(S.settings.contrat,isBtp(S.settings));
     var info={work:'',cp:btpCp?'Ce jour est retiré de votre fiche et payé à part par la caisse CIBTP.':'Un jour de congé payé est décompté de votre solde.',maladie:'Les 3 premiers jours ne sont pas payés par la Sécu (carence), sauf si votre convention le prévoit.',absent:'Une absence non autorisée est retirée de votre salaire.'};
     $('shInfo').textContent=info[dr.t]; $('shInfo').hidden=!info[dr.t];
@@ -579,7 +582,17 @@ function openDay(k){
   if($('shDel')) $('shDel').addEventListener('click',function(){delete S.days[k];save();close();render();toast('Jour effacé')});
   if($('shCancel')) $('shCancel').addEventListener('click',close);
   upd(); $('shSave').focus();
-  function stepper(f,title,hint){return '<div class="stepper"><div class="txt"><b>'+title+'</b><span>'+hint+'</span></div><div class="ctl"><button type="button" data-f="'+f+'" data-d="-0.25" aria-label="Moins un quart d\'heure">−</button><output id="o-'+f+'" class="num"></output><button type="button" data-f="'+f+'" data-d="0.25" aria-label="Plus un quart d\'heure">+</button></div></div>'}
+  function stepper(f,title,hint){return '<div class="stepper"><div class="txt"><b>'+title+'</b><span>'+hint+'</span></div><div class="ctl"><button type="button" data-f="'+f+'" data-d="-0.25" aria-label="Moins un quart d\'heure">−</button><input id="o-'+f+'" class="num hin" type="text" inputmode="text" autocomplete="off" data-in="'+f+'" aria-label="'+title+', ex. 07h30"><button type="button" data-f="'+f+'" data-d="0.25" aria-label="Plus un quart d\'heure">+</button></div></div>'}
+}
+
+// Champ d'heures qu'on peut taper : 7h30, 7:30, 7,5… (arrondi au quart d'heure)
+function hoursInput(list,set,get){
+  Array.prototype.forEach.call(list,function(i){
+    i.addEventListener('focus',function(){i.select()});
+    i.addEventListener('input',function(){var v=F.parseHours(i.value);if(!isNaN(v))set(i,v)});
+    i.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();i.blur()}});
+    i.addEventListener('blur',function(){i.value=F.hours(get(i))});
+  });
 }
 
 /* ---------- événements ---------- */
@@ -690,7 +703,8 @@ $('photoIn').addEventListener('change',function(){var f=this.files&&this.files[0
 $('clearSample').addEventListener('click',function(){S.days={};S.sample=false;save();render();toast('Exemple effacé, à vous de jouer')});
 
 var supAdd=1; $('supDate').value=TODAY;
-document.querySelectorAll('[data-sup]').forEach(function(b){b.addEventListener('click',function(){supAdd=Math.max(.25,Math.min(12,supAdd+Number(b.dataset.sup)));$('supAdd').textContent=F.hours(supAdd)})});
+document.querySelectorAll('[data-sup]').forEach(function(b){b.addEventListener('click',function(){supAdd=Math.max(.25,Math.min(12,supAdd+Number(b.dataset.sup)));$('supAdd').value=F.hours(supAdd)})});
+hoursInput([$('supAdd')],function(i,v){supAdd=Math.max(.25,Math.min(12,v))},function(){return supAdd});
 $('supSave').addEventListener('click',function(){
   var k=$('supDate').value; if(!k){toast('Choisissez un jour');return}
   var d=F.parse(k), e=S.days[k]; if(!e||e.t!=='work') e={t:'work',n:0,s:0,p:false,note:''};
