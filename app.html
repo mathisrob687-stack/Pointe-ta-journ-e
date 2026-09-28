@@ -164,7 +164,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <div><div class="big num" id="supTotal" style="font-size:44px">0 h</div><div class="muted">heures sup faites</div></div>
         <div><div class="big num" id="supEur" style="font-size:44px">0 €</div><div class="muted">en plus (brut)</div></div>
       </div>
-      <div class="rule">Au-delà de <b id="ruleWeekly">35 h</b> par semaine, les <b>8 premières</b> heures sup sont payées <b>+25 %</b>, les suivantes <b>+50 %</b>.</div>
+      <div class="rule" id="supRule">Au-delà de <b>35 h</b> par semaine, les <b>8 premières</b> heures sup sont payées <b>+25 %</b>, les suivantes <b>+50 %</b>.</div>
     </div>
     <div class="card stack">
       <h2>Ajouter des heures sup</h2>
@@ -199,7 +199,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
     <div class="card stack">
       <h3>Combien vaut un jour de congé&nbsp;?</h3>
       <div class="lines" id="cpValue"></div>
-      <p class="muted" style="margin:0;font-size:14px">On garde la règle la plus avantageuse pour vous. Dans le BTP, les congés sont souvent payés par la caisse des congés payés, pas par l'employeur.</p>
+      <p class="muted" style="margin:0;font-size:14px" id="cpWho">On garde la règle la plus avantageuse pour vous.</p>
     </div>
   </section>
 
@@ -208,13 +208,14 @@ h3{font-family:var(--display);font-size:18px;margin:0}
     <div class="card stack">
       <div class="eyebrow" id="payLabel">Paie estimée</div>
       <div class="lines" id="payLines"></div>
+      <p class="muted" style="margin:0;font-size:13px" id="payNote"></p>
     </div>
     <div class="card stack" id="checkCard">
       <h2>Comparer avec ma fiche</h2>
       <div id="checkForm" class="stack">
         <div class="two">
-          <div class="field"><label for="chkSup">Heures sup payées</label><input id="chkSup" type="number" inputmode="decimal" step="0.25" min="0" placeholder="ex. 13"></div>
-          <div class="field"><label for="chkNet">Net à payer (€)</label><input id="chkNet" type="number" inputmode="decimal" step="0.01" min="0" placeholder="ex. 1850"></div>
+          <div class="field"><label for="chkSup">Heures sup payées (total)</label><input id="chkSup" type="number" inputmode="decimal" step="0.25" min="0" placeholder="ex. 13"></div>
+          <div class="field"><label for="chkNet">Net avant impôt (€)</label><input id="chkNet" type="number" inputmode="decimal" step="0.01" min="0" placeholder="ex. 1850"></div>
         </div>
         <button class="btn btn-blue block" id="chkBtn" type="button">Comparer</button>
         <span class="muted" style="font-size:13px" id="freeLeft">1 vérification gratuite</span>
@@ -265,10 +266,11 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         </div></div>
       <div class="two">
         <div class="field"><label for="setRate">Taux horaire brut</label><div class="unit"><input id="setRate" type="number" inputmode="decimal" step="0.01" min="0"><span>€</span></div></div>
-        <div class="field"><label for="setWeekly">Heures / semaine</label><div class="unit"><input id="setWeekly" type="number" inputmode="decimal" step="0.5" min="0"><span>h</span></div></div>
+        <div class="field"><label for="setWeekly">Heures / semaine (contrat)</label><div class="unit"><input id="setWeekly" type="number" inputmode="decimal" step="0.5" min="0"><span>h</span></div></div>
         <div class="field"><label for="setDaily">Journée normale</label><div class="unit"><input id="setDaily" type="number" inputmode="decimal" step="0.25" min="0"><span>h</span></div></div>
         <div class="field"><label for="setPanier">Panier repas</label><div class="unit"><input id="setPanier" type="number" inputmode="decimal" step="0.01" min="0"><span>€</span></div></div>
       </div>
+      <label class="checkrow"><input type="checkbox" id="setBtp"><span><b>Je travaille dans le BTP</b><br><span class="muted" style="font-size:13px">Vos congés sont alors payés par la caisse CIBTP, pas sur la fiche de paie.</span></span></label>
       <div class="field"><label for="setStart">Date d'embauche</label><input id="setStart" type="date"><span class="hint">Pour calculer vos congés payés.</span></div>
       <button class="btn btn-blue block" id="setSave" type="button">Enregistrer</button>
     </div>
@@ -323,37 +325,43 @@ function sample(){
   var a=new Date(y,m,25,12); if(a<=today&&a.getDay()>=1&&a.getDay()<=5) days[F.iso(a)]={t:'absent',n:0,s:0,p:false,note:'Rendez-vous perso'};
   return days;
 }
-var DEF={settings:{contrat:'cdi',statut:'ouvrier',rate:13.2,weekly:35,daily:7,panier:10.9,start:'2025-03-10',cpBefore:5},days:null,sample:true};
+var DEF={settings:{contrat:'cdi',statut:'ouvrier',btp:true,rate:13.2,weekly:35,daily:7,panier:10.9,start:'2025-03-10',cpBefore:5},days:null,sample:true};
 var S=F.store.get(KEY,null);
 if(!S||!S.settings){S=JSON.parse(JSON.stringify(DEF));S.days=sample();}
 function save(){F.store.set(KEY,S)}
 function isPlus(){return !!F.store.get('fdc-plus',false)}
+// anciens réglages sans ce choix : BTP par défaut
+function isBtp(st){return st.btp!==false}
 var view={y:today.getFullYear(),m:today.getMonth()};
 
 /* ---------- calculs ---------- */
 function mondayOf(d){var x=new Date(d);x.setDate(x.getDate()-(x.getDay()+6)%7);return F.iso(x)}
 function supSplit(){
   var weeks={}; Object.keys(S.days).sort().forEach(function(k){var e=S.days[k];if(!e.s)return;var w=mondayOf(F.parse(k));(weeks[w]=weeks[w]||[]).push(k)});
-  var out={}; Object.keys(weeks).forEach(function(w){var used=0;weeks[w].forEach(function(k){var s=S.days[k].s,a=Math.max(0,Math.min(s,8-used));out[k]={s25:a,s50:s-a};used+=s})});
+  var wk=S.settings.weekly, out={};
+  Object.keys(weeks).forEach(function(w){var used=0;weeks[w].forEach(function(k){var s=S.days[k].s,a=F.splitWeek(used,wk),b=F.splitWeek(used+s,wk);out[k]={s10:b.s10-a.s10,s25:b.s25-a.s25,s50:b.s50-a.s50};used+=s})});
   return out;
 }
 function inMonth(k,y,m){var d=F.parse(k);return d.getFullYear()===y&&d.getMonth()===m}
 function monthData(y,m){
-  var sp=supSplit(), t={n:0,s:0,s25:0,s50:0,pan:0,cp:0,maladie:0,absent:0};
+  var sp=supSplit(), t={n:0,s:0,s10:0,s25:0,s50:0,pan:0,cp:0,maladie:0,absent:0};
   Object.keys(S.days).forEach(function(k){if(!inMonth(k,y,m))return;var e=S.days[k];
-    if(e.t==='work'){t.n+=e.n;t.s+=e.s||0;var x=sp[k]||{s25:0,s50:0};t.s25+=x.s25;t.s50+=x.s50;if(e.p)t.pan++;}
+    if(e.t==='work'){t.n+=e.n;t.s+=e.s||0;var x=sp[k]||{s10:0,s25:0,s50:0};t.s10+=x.s10;t.s25+=x.s25;t.s50+=x.s50;if(e.p)t.pan++;}
     else t[e.t]++;});
   var st=S.settings;
-  t.pay=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,s25:t.s25,s50:t.s50,absH:t.absent*st.daily,maladieJours:t.maladie,paniers:t.pan,panierAmt:st.panier});
+  t.pay=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:t.s10,s25:t.s25,s50:t.s50,absH:t.absent*st.daily,maladieJours:t.maladie,cpJours:t.cp,paniers:t.pan,panierAmt:st.panier});
   return t;
 }
-function dayValue(k,sp){
+// Taux horaire moyen des heures normales (39 h : les heures sup du contrat sont incluses)
+function hourRate(st){return st.weekly>35?F.contractMonthly(st.rate,st.weekly)/(st.weekly*52/12):st.rate}
+// Ce que rapporte un jour, en net, avec le taux de cotisations réel du mois
+function dayValue(k,sp,pay){
   var e=S.days[k], st=S.settings; if(!e) return null;
-  var cr=F.cotisRate(st.contrat,st.statut), c=F.CONTRATS[st.contrat];
-  var bonus=(1+c.precarite)*(1+c.icp);
-  if(e.t==='work'){var x=sp[k]||{s25:0,s50:0};var b=(e.n*st.rate+x.s25*st.rate*1.25+x.s50*st.rate*1.5)*bonus;return b*(1-cr)+(e.p?st.panier:0)}
+  var cr=pay.cotisRate, c=F.CONTRATS[st.contrat];
+  var bonus=c.fin?1:(1+c.precarite)*(1+(pay.caisse?0:c.icp));
+  if(e.t==='work'){var x=sp[k]||{s10:0,s25:0,s50:0};var b=(e.n*hourRate(st)+(x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate)*bonus;return b*(1-cr)+(e.p?st.panier:0)}
   if(e.t==='cp') return F.cpDayValue(st.rate,st.weekly,0).best*(1-cr);
-  return -st.daily*st.rate*(1-cr);
+  return -st.daily*hourRate(st)*(1-cr);
 }
 
 /* ---------- rendu ---------- */
@@ -364,14 +372,14 @@ function render(){
 }
 function renderMois(){
   var y=view.y,m=view.m,name=MONTHS[m]+' '+y, t=monthData(y,m);
-  $('calTitle').textContent=name; $('sumLabel').textContent='Net estimé · '+name;
+  $('calTitle').textContent=name; $('sumLabel').textContent='Net avant impôt estimé · '+name;
   $('sumNet').textContent=F.eur0.format(t.pay.net);
   $('sumH').textContent=F.hours(t.n+t.s); $('sumSup').textContent=F.hours(t.s);
   $('sumCp').textContent=t.cp+' j'; $('sumAbs').textContent=(t.maladie+t.absent)+' j';
   var sp=supSplit(), cal=$('cal'), html='';
   DOW.forEach(function(d){html+='<div class="dow">'+d+'</div>'});
   var lead=(new Date(y,m,1,12).getDay()+6)%7; for(var i=0;i<lead;i++) html+='<div class="day blank"></div>';
-  var max=1; for(var d=1;d<=31;d++){var dt=new Date(y,m,d,12);if(dt.getMonth()!==m)break;var v=dayValue(F.iso(dt),sp);if(v>max)max=v;}
+  var max=1; for(var d=1;d<=31;d++){var dt=new Date(y,m,d,12);if(dt.getMonth()!==m)break;var v=dayValue(F.iso(dt),sp,t.pay);if(v>max)max=v;}
   for(d=1;d<=31;d++){
     dt=new Date(y,m,d,12); if(dt.getMonth()!==m) break;
     var k=F.iso(dt), e=S.days[k], wd=dt.getDay(), cls=['day'], inner='<span class="d">'+d+'</span>', style='';
@@ -379,7 +387,7 @@ function renderMois(){
     if(k===TODAY) cls.push('today'); if(dt>today) cls.push('future');
     var label=d+' '+MONTHS[m];
     if(e){
-      v=dayValue(k,sp);
+      v=dayValue(k,sp,t.pay);
       if(e.t==='work'){cls.push('worked');if(e.s)cls.push('sup');style=' style="--fill:'+Math.round(25+75*v/max)+'%"';
         inner+='<span><span class="amt num">'+Math.round(v)+'€</span><span class="h num">'+F.hours(e.n+(e.s||0))+'</span></span>';label+=', '+F.hours(e.n+(e.s||0))+', '+F.eur0.format(v);}
       else{cls.push(e.t);inner+='<span><span class="amt num">'+(v<0?'−':'')+Math.abs(Math.round(v))+'€</span><span class="h">'+TYPES[e.t].toLowerCase()+'</span></span>';label+=', '+TYPES[e.t];}
@@ -392,10 +400,17 @@ function renderSup(){
   var y=view.y,m=view.m,t=monthData(y,m),st=S.settings,sp=supSplit();
   $('supLabel').textContent=MONTHS[m]+' '+y;
   $('supTotal').textContent=F.hours(t.s); $('supEur').textContent='+'+F.eur0.format(t.pay.hs);
-  $('ruleWeekly').textContent=F.hours(st.weekly);
+  $('supRule').innerHTML=supRuleText(st.weekly);
   var keys=Object.keys(S.days).filter(function(k){return inMonth(k,y,m)&&S.days[k].s>0}).sort().reverse();
   $('supList').innerHTML=keys.length?keys.map(function(k){var d=F.parse(k),x=sp[k],e=S.days[k];
-    return '<button type="button" class="li" data-k="'+k+'"><div><b>'+cap(DOWL[d.getDay()])+' '+d.getDate()+'</b><div class="muted" style="font-size:14px">'+(e.note?esc(e.note):'&nbsp;')+'</div></div><div class="r"><div class="num"><b>'+F.hours(e.s)+'</b> · '+F.eur2.format((x.s25*1.25+x.s50*1.5)*st.rate)+'</div><div>'+(x.s25?'<span class="pill p25">'+F.hours(x.s25)+' +25 %</span> ':'')+(x.s50?'<span class="pill p50">'+F.hours(x.s50)+' +50 %</span>':'')+'</div></div></button>'}).join(''):'<p class="muted">Pas encore d\'heures sup ce mois-ci.</p>';
+    return '<button type="button" class="li" data-k="'+k+'"><div><b>'+cap(DOWL[d.getDay()])+' '+d.getDate()+'</b><div class="muted" style="font-size:14px">'+(e.note?esc(e.note):'&nbsp;')+'</div></div><div class="r"><div class="num"><b>'+F.hours(e.s)+'</b> · '+F.eur2.format((x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate)+'</div><div>'+(x.s10?'<span class="pill p25">'+F.hours(x.s10)+' +10 %</span> ':'')+(x.s25?'<span class="pill p25">'+F.hours(x.s25)+' +25 %</span> ':'')+(x.s50?'<span class="pill p50">'+F.hours(x.s50)+' +50 %</span>':'')+'</div></div></button>'}).join(''):'<p class="muted">Pas encore d\'heures sup ce mois-ci.</p>';
+}
+function supRuleText(w){
+  if(w>35){var inc=Math.min(w-35,8),left=Math.max(0,8-(w-35));
+    return 'Votre contrat de <b>'+F.hours(w)+'</b> comprend déjà <b>'+F.hours(w-35)+'</b> sup par semaine, payées sur chaque fiche'+(w-35>8?' (8 h à +25 %, le reste à +50 %)':' à +25 %')+'. Les heures notées ici viennent en plus : '+(left?'<b>'+F.hours(left)+'</b> encore à <b>+25 %</b>, puis ':'')+'<b>+50 %</b>.';}
+  if(w<35){var b10=Math.min(w*0.1,35-w);
+    return 'Temps partiel (<b>'+F.hours(w)+'</b>) : les heures en plus sont payées <b>+10 %</b> jusqu\'à <b>'+F.hours(b10)+'</b> par semaine, puis <b>+25 %</b>.';}
+  return 'Au-delà de <b>35 h</b> par semaine, les <b>8 premières</b> heures sup sont payées <b>+25 %</b>, les suivantes <b>+50 %</b>.';
 }
 function cpStats(){
   var st=S.settings, start=st.start?F.parse(st.start):null, a=F.cpAcquired(start,today), from=F.cpPeriodStart(today);
@@ -408,34 +423,43 @@ function renderConges(){
   $('cpPeriod').textContent='Du '+c.from.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+' au 31 mai '+(c.from.getFullYear()+1);
   $('cpLeft').textContent=c.left.toLocaleString('fr-FR')+' j';
   // brut de la période pour la règle du dixième : on estime avec le salaire de base
-  var brutPeriode=F.monthlyBase(st.rate,st.weekly)*Math.max(1,c.a.months);
+  var brutPeriode=F.contractMonthly(st.rate,st.weekly)*Math.max(1,c.a.months);
+  var caisse=F.caisseCP(st.contrat,isBtp(st));
   var dv=F.cpDayValue(st.rate,st.weekly,brutPeriode);
   $('cpVal').textContent=F.eur0.format(c.left*dv.best);
   var tot=Math.max(c.a.days,c.n,1);
   $('cpBarTaken').style.width=(100*Math.min(c.n,c.a.days)/tot)+'%'; $('cpBarLeft').style.width=(100*c.left/tot)+'%';
   $('cpTakenTxt').textContent=c.n+' posés'; $('cpLeftTxt').textContent=c.left.toLocaleString('fr-FR')+' restants'; $('cpAcqTxt').textContent='sur '+c.a.days.toLocaleString('fr-FR')+' gagnés en '+c.a.months+' mois';
-  if(c0.icp) $('cpRule').innerHTML='En <b>'+c0.label+'</b>, vos congés vous sont payés à la fin du contrat : <b>+10 %</b> de tout ce que vous avez gagné.';
+  if(c0.icp&&!caisse) $('cpRule').innerHTML='En <b>'+c0.label+'</b>, vos congés vous sont payés à la fin du contrat : <b>+10 %</b> de tout ce que vous avez gagné.';
   else $('cpRule').innerHTML='Vous gagnez <b>2,5 jours</b> par mois travaillé, du 1er juin au 31 mai, soit 30 jours ouvrables par an.';
   $('cpList').innerHTML=c.taken.length?c.taken.slice().reverse().map(function(k){var d=F.parse(k);return '<button type="button" class="li" data-k="'+k+'"><span>'+cap(DOWL[d.getDay()])+' '+d.getDate()+' '+MONTHS[d.getMonth()]+'</span><span class="pill" style="background:var(--hl);color:var(--ink)">Congé</span></button>'}).join(''):'<p class="muted" style="margin:0">Aucun congé noté dans l\'app pour cette période.</p>';
   $('cpBefore').value=st.cpBefore||0;
   var L=function(a,b,cls){return '<div class="l'+(cls?' '+cls:'')+'"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
-  $('cpValue').innerHTML=L('Maintien du salaire (1/26 du mois)',F.eur2.format(dv.maintien))+L('Règle du 1/10 de ce que vous avez gagné',F.eur2.format(dv.dixieme))+L('Retenu pour vous',F.eur2.format(dv.best)+' / jour','total');
+  $('cpValue').innerHTML=L('Maintien du salaire (1/26 du mois)',F.eur2.format(dv.maintien))+L('Règle du 1/10 de ce que vous avez gagné',F.eur2.format(dv.dixieme))+L('Retenu pour vous',F.eur2.format(dv.best)+' / jour','total')+
+    (caisse?L('Avec la prime de vacances BTP (+30 %)',F.eur2.format(dv.best*1.3)+' / jour'):'');
+  $('cpWho').textContent=caisse?'BTP : vos congés ne sont pas payés sur la fiche de paie. L\'employeur retire les jours posés et la caisse CIBTP vous les verse à part, avec une prime de vacances de 30 % (sur les 4 premières semaines).':'On garde la règle la plus avantageuse pour vous.';
 }
 function renderPaie(){
   var y=view.y,m=view.m,t=monthData(y,m),p=t.pay,st=S.settings;
   $('payLabel').textContent='Paie estimée · '+MONTHS[m]+' '+y+' · '+F.CONTRATS[st.contrat].label;
   var L=function(a,b,cls){return '<div class="l'+(cls?' '+cls:'')+'"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
-  $('payLines').innerHTML=L('Salaire de base ('+(st.weekly*52/12).toFixed(2).replace('.',',')+' h)',F.eur2.format(p.base))+
-    (p.hs?L('Heures sup ('+F.hours(t.s)+')',F.eur2.format(p.hs)):'')+
+  var cotisTxt=st.contrat==='apprenti'?'sur la part au-dessus de la moitié du SMIC':'moins sur les heures sup';
+  $('payLines').innerHTML=L('Salaire de base ('+F.hours(p.baseH)+')',F.eur2.format(p.base))+
+    (p.hsContrat?L('Heures sup du contrat ('+F.hours(p.hsContratH)+')',F.eur2.format(p.hsContrat)):'')+
+    (p.hs?L('Heures sup notées ('+F.hours(t.s)+')',F.eur2.format(p.hs)):'')+
     (p.abs?L('Absences non payées ('+t.absent+' j)','−'+F.eur2.format(p.abs),'neg'):'')+
     (p.mal?L('Maladie ('+t.maladie+' j)','−'+F.eur2.format(p.mal),'neg'):'')+
+    (p.cpRetenue?L('Congés ('+t.cp+' j, payés par la caisse CIBTP)','−'+F.eur2.format(p.cpRetenue),'neg'):'')+
     (p.precarite?L('Prime de précarité 10 %',F.eur2.format(p.precarite)):'')+
     (p.icp?L('Indemnité de congés 10 %',F.eur2.format(p.icp)):'')+
     L('Brut',F.eur2.format(p.brut),'total')+
-    L('Cotisations ('+Math.round(p.cotisRate*100)+' %, moins sur les heures sup)','−'+F.eur2.format(p.cotis),'neg')+
+    L('Cotisations ('+Math.round(p.cotisRate*100)+' %, '+cotisTxt+')','−'+F.eur2.format(p.cotis),'neg')+
     (p.paniers?L('Paniers repas ('+t.pan+')',F.eur2.format(p.paniers)):'')+
-    (p.ijss?L('Indemnités Sécu maladie (estim.)',F.eur2.format(p.ijss)):'')+
-    L('Net estimé',F.eur2.format(p.net),'total');
+    (p.ijss?L('Indemnités Sécu maladie ('+p.ijJours+' j, estim.)',F.eur2.format(p.ijss)):'')+
+    L('Net avant impôt',F.eur2.format(p.net),'total')+
+    (p.finContrat?L('Mis de côté pour la fin du CDD (primes 10 % + 10 %, brut)',F.eur2.format(p.finContrat)):'')+
+    (p.cpRetenue?L('Versé à part par la caisse CIBTP (brut, avec prime 30 %)',F.eur2.format(t.cp*F.cpDayValue(st.rate,st.weekly,0).best*1.3)):'');
+  $('payNote').textContent=(p.ijss?'Les indemnités Sécu sont souvent versées directement par la CPAM, pas sur la fiche. Beaucoup d\'entreprises du BTP complètent votre salaire pendant un arrêt : vérifiez votre convention. ':'')+'Le net à payer sur votre fiche sera plus bas si un impôt à la source est prélevé.';
   var plus=isPlus(), free=F.store.get(FREE_KEY,null), used=free&&free.used;
   $('plusPitch').hidden=plus; $('plusArea').hidden=!plus;
   $('chkBtn').disabled=!plus&&used;
@@ -447,12 +471,12 @@ function renderForecast(){
   var t=monthData(today.getFullYear(),today.getMonth());
   var worked=Object.keys(S.days).filter(function(k){return inMonth(k,today.getFullYear(),today.getMonth())&&S.days[k].t==='work'&&S.days[k].n>0}).length||1;
   var wd=0; for(var d=1;d<=31;d++){var dt=new Date(y,m,d,12);if(dt.getMonth()!==m)break;if(dt.getDay()>=1&&dt.getDay()<=5&&!F.HOLI[F.iso(dt)])wd++;}
-  var supH=t.s/worked*wd, weeks=wd/5, s25=Math.min(supH,8*weeks);
-  var p=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,s25:s25,s50:Math.max(0,supH-s25),paniers:Math.round(t.pan/worked*wd),panierAmt:st.panier});
+  var supH=t.s/worked*wd, weeks=wd/5, w=F.splitWeek(supH/weeks,st.weekly);
+  var p=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:w.s10*weeks,s25:w.s25*weeks,s50:w.s50*weeks,paniers:Math.round(t.pan/worked*wd),panierAmt:st.panier});
   $('fcLabel').textContent='Prévision · '+MONTHS[m]+' '+y;
   $('fcRange').textContent=F.eur0.format(Math.floor(p.net*.96/10)*10)+' à '+F.eur0.format(Math.ceil(p.net*1.04/10)*10);
   $('fcWhy').textContent=wd+' jours ouvrés, au même rythme d\'heures sup que ce mois-ci (environ '+F.hours(supH)+').';
-  var cr=1-p.cotisRate, parts=[['Salaire de base',p.base*cr],['Heures sup',p.hs*cr],['Paniers',p.paniers]];
+  var cr=1-p.cotisRate, parts=[['Salaire de base',p.base*cr],['Heures sup',(p.hsContrat+p.hs)*cr],['Paniers',p.paniers]];
   if(p.precarite+p.icp) parts.push(['Primes 10 %',(p.precarite+p.icp)*cr]);
   var mx=Math.max.apply(null,parts.map(function(x){return x[1]}).concat([1]));
   $('fcBars').innerHTML=parts.map(function(x){return '<div class="bar"><span>'+x[0]+'</span><div class="track"><div class="fill" style="width:'+(100*x[1]/mx).toFixed(1)+'%"></div></div><span class="v num">'+F.eur0.format(x[1])+'</span></div>'}).join('');
@@ -462,6 +486,7 @@ function renderContrat(){
   document.querySelectorAll('[data-group]').forEach(function(g){g.querySelectorAll('.chip').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===st[g.dataset.group]?'true':'false')})});
   $('contratHint').textContent=F.CONTRATS[st.contrat].hint;
   $('setRate').value=st.rate;$('setWeekly').value=st.weekly;$('setDaily').value=st.daily;$('setPanier').value=st.panier;$('setStart').value=st.start||'';
+  $('setBtp').checked=isBtp(st);
 }
 
 /* ---------- saisie d'un jour ---------- */
@@ -483,12 +508,13 @@ function openDay(k){
     $('o-n').textContent=String(dr.n).replace('.',','); $('o-s').textContent=String(dr.s).replace('.',',');
     $('shWork').hidden=dr.t!=='work';
     host.querySelectorAll('#shType button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.t===dr.t?'true':'false')});
-    var info={work:'',cp:'Un jour de congé payé est décompté de votre solde.',maladie:'Les 3 premiers jours ne sont pas payés par la Sécu (carence), sauf si votre convention le prévoit.',absent:'Une absence non autorisée est retirée de votre salaire.'};
+    var btpCp=F.caisseCP(S.settings.contrat,isBtp(S.settings));
+    var info={work:'',cp:btpCp?'Ce jour est retiré de votre fiche et payé à part par la caisse CIBTP.':'Un jour de congé payé est décompté de votre solde.',maladie:'Les 3 premiers jours ne sont pas payés par la Sécu (carence), sauf si votre convention le prévoit.',absent:'Une absence non autorisée est retirée de votre salaire.'};
     $('shInfo').textContent=info[dr.t]; $('shInfo').hidden=!info[dr.t];
-    var st=S.settings, cr=F.cotisRate(st.contrat,st.statut), v;
-    if(dr.t==='work') v=(dr.n*st.rate+dr.s*st.rate*1.25)*(1-cr)+($('shP').checked?st.panier:0);
+    var st=S.settings, cr=monthData(d.getFullYear(),d.getMonth()).pay.cotisRate, v;
+    if(dr.t==='work') v=(dr.n*hourRate(st)+dr.s*st.rate*(st.weekly<35?1.1:1.25))*(1-cr)+($('shP').checked?st.panier:0);
     else if(dr.t==='cp') v=F.cpDayValue(st.rate,st.weekly,0).best*(1-cr);
-    else v=-st.daily*st.rate*(1-cr);
+    else v=-st.daily*hourRate(st)*(1-cr);
     $('shValLbl').textContent=v<0?'Retenue sur le salaire, environ':'Ce jour vous rapporte environ';
     $('shVal').textContent=(v<0?'−':'')+F.eur0.format(Math.abs(v));
   }
@@ -542,10 +568,10 @@ $('chkBtn').addEventListener('click',function(){
   var paidSup=parseFloat($('chkSup').value), net=parseFloat($('chkNet').value);
   if(isNaN(paidSup)&&isNaN(net)){out.innerHTML='<div class="verdict ko"><span class="t">Il manque un chiffre</span><p>Remplissez au moins les heures sup payées.</p></div>';return}
   var h='';
-  if(!isNaN(paidSup)){var diff=t.s-paidSup;
-    if(diff>0.24) h+='<div class="verdict ko"><span class="t">Il vous manque '+F.hours(diff)+' sup</span><p>Vous avez noté '+F.hours(t.s)+', la fiche en paie '+F.hours(paidSup)+'. Environ <b>'+F.eur0.format(diff*S.settings.rate*1.25)+' brut</b> en moins.</p></div>';
+  if(!isNaN(paidSup)){var due=t.s+t.pay.hsContratH, diff=due-paidSup, inc=t.pay.hsContratH?' (dont '+F.hours(t.pay.hsContratH)+' prévues par votre contrat)':'';
+    if(diff>0.24) h+='<div class="verdict ko"><span class="t">Il vous manque '+F.hours(diff)+' sup</span><p>On attend '+F.hours(due)+inc+', la fiche en paie '+F.hours(paidSup)+'. Environ <b>'+F.eur0.format(diff*S.settings.rate*1.25)+' brut</b> en moins.</p></div>';
     else if(diff<-0.24) h+='<div class="verdict ok"><span class="t">La fiche paie plus que noté</span><p>Vérifiez qu\'il ne manque pas de jours dans votre calendrier.</p></div>';
-    else h+='<div class="verdict ok"><span class="t">Heures sup : c\'est bon ✓</span><p>'+F.hours(t.s)+' notées, '+F.hours(paidSup)+' payées.</p></div>';}
+    else h+='<div class="verdict ok"><span class="t">Heures sup : c\'est bon ✓</span><p>'+F.hours(due)+' attendues'+inc+', '+F.hours(paidSup)+' payées.</p></div>';}
   if(!isNaN(net)){var gap=t.pay.net-net;
     h+=gap>30?'<div class="verdict ko"><span class="t">Net plus bas que prévu</span><p>Attendu environ '+F.eur0.format(t.pay.net)+', la fiche indique '+F.eur0.format(net)+' ('+F.eur0.format(gap)+' d\'écart).</p></div>'
              :'<div class="verdict ok"><span class="t">Net cohérent ✓</span><p>Attendu environ '+F.eur0.format(t.pay.net)+', la fiche indique '+F.eur0.format(net)+'.</p></div>';}
@@ -562,7 +588,7 @@ $('slip').addEventListener('change',function(ev){
     var t=monthData(today.getFullYear(),today.getMonth()), st=S.settings, paid=Math.max(0,Math.floor(t.s)-4), miss=t.s-paid;
     var L=function(a,b,ok){return '<div class="l"><span>'+a+'</span><span class="num" style="color:var(--'+(ok?'ink':'bad')+')">'+(ok?'✓ ':'⚠ ')+b+'</span></div>'};
     out.innerHTML='<div class="stack"><p class="muted" style="margin:0;font-size:14px">Aperçu : l\'IA n\'est pas encore branchée. Voici le type de résultat qu\'elle donnera, calculé avec vos heures.</p><div class="lines">'+
-      L('Heures de base payées',(st.weekly*52/12).toFixed(2).replace('.',',')+' h',true)+L('Taux horaire',F.eur2.format(st.rate),true)+
+      L('Heures de base payées',F.hours(t.pay.baseH),true)+L('Taux horaire',F.eur2.format(st.rate),true)+
       L('Heures sup payées',F.hours(paid)+' sur '+F.hours(t.s)+' faites',miss<=0.24)+L('Paniers payés',t.pan+' × '+F.eur2.format(st.panier),true)+
       L('Cotisations','taux '+F.STATUTS[st.statut].label.toLowerCase()+' correct',true)+'</div>'+
       (miss>0.24?'<div class="verdict ko"><span class="t">1 erreur trouvée</span><p>'+F.hours(miss)+' sup non payées, soit environ '+F.eur0.format(miss*st.rate*1.25)+' brut.</p></div>':'<div class="verdict ok"><span class="t">Aucune erreur trouvée ✓</span></div>')+'</div>';
@@ -575,7 +601,7 @@ document.querySelectorAll('[data-group]').forEach(function(g){g.addEventListener
 $('setSave').addEventListener('click',function(){
   var g=function(id){return parseFloat(String($(id).value).replace(',','.'))};
   var sel=function(n){var b=document.querySelector('[data-group="'+n+'"] [aria-pressed="true"]');return b?b.dataset.v:S.settings[n]};
-  var v={contrat:sel('contrat'),statut:sel('statut'),rate:g('setRate'),weekly:g('setWeekly'),daily:g('setDaily'),panier:g('setPanier'),start:$('setStart').value,cpBefore:S.settings.cpBefore||0};
+  var v={contrat:sel('contrat'),statut:sel('statut'),rate:g('setRate'),weekly:g('setWeekly'),daily:g('setDaily'),panier:g('setPanier'),start:$('setStart').value,btp:$('setBtp').checked,cpBefore:S.settings.cpBefore||0};
   if([v.rate,v.weekly,v.daily,v.panier].some(function(x){return isNaN(x)||x<0})){toast('Un chiffre est vide ou incorrect');return}
   S.settings=v;save();render();toast('Contrat enregistré');
 });

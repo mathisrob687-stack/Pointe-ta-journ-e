@@ -252,7 +252,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <!-- étape 3 -->
           <div class="step" data-step="3" hidden style="display:flex;flex-direction:column;gap:16px">
             <div class="step-title"><b>Votre fiche de paie</b><span>Étape 3 sur 3</span></div>
-            <div class="field"><label for="fSupPaid">Heures sup payées sur la fiche</label><div class="unit"><input id="fSupPaid" type="number" inputmode="decimal" step="0.25" min="0" value="13"><span>h</span></div><span class="hint">Additionnez les lignes « heures sup 25 % » et « 50 % ».</span></div>
+            <div class="field"><label for="fSupPaid">Heures sup payées sur la fiche</label><div class="unit"><input id="fSupPaid" type="number" inputmode="decimal" step="0.25" min="0" value="13"><span>h</span></div><span class="hint">Additionnez toutes les lignes « heures sup 25 % » et « 50 % », y compris celles prévues par un contrat de 39 h.</span></div>
             <div class="field"><label for="fNet">Net à payer avant impôt</label><div class="unit"><input id="fNet" type="number" inputmode="decimal" step="0.01" min="0" value="1812"><span>€</span></div></div>
           </div>
           <div class="actions" style="margin-top:18px">
@@ -496,13 +496,13 @@ $('freeForm').addEventListener('submit',function(e){
 
 function compute(){
   var rate=num('fRate'),weekly=num('fWeekly')||35,daily=weekly/5;
-  var weeks=4.33;
-  function split(h){var s25=Math.min(h,8*weeks);return{s25:s25,s50:Math.max(0,h-s25)}}
+  // la fiche compte aussi les heures sup comprises dans le contrat (ex. 39 h)
+  var ch=F.contractHours(weekly), incl=ch.s25+ch.s50;
   var common={rate:rate,weekly:weekly,daily:daily,contrat:state.contrat,statut:state.statut,absH:num('fAbs')*daily,paniers:num('fPan'),panierAmt:num('fPanAmt')};
-  var sf=split(num('fSup')), sp=split(num('fSupPaid'));
+  var sf=F.splitMonth(num('fSup'),weekly), sp=F.splitMonth(Math.max(0,num('fSupPaid')-incl),weekly);
   var due=F.computePay(Object.assign({},common,sf));
   var paid=F.computePay(Object.assign({},common,sp));
-  return {contrat:state.contrat,statut:state.statut,supDone:num('fSup'),supPaid:num('fSupPaid'),netPaid:num('fNet'),due:due,hsGapNet:due.net-paid.net,hsGapBrut:due.brut-paid.brut};
+  return {contrat:state.contrat,statut:state.statut,supDone:num('fSup')+incl,supPaid:num('fSupPaid'),netPaid:num('fNet'),due:due,hsGapNet:due.net-paid.net,hsGapBrut:due.brut-paid.brut};
 }
 
 function countUp(el,to){
@@ -527,13 +527,15 @@ function renderResult(r,animate){
   }
   var L=function(a,b,cls){return '<div class="l'+(cls?' '+cls:'')+'"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
   html+='<div class="lines">'+L('Salaire de base',F.eur2.format(d.base))+
-    L('Heures sup ('+F.hours(r.supDone)+')',F.eur2.format(d.hs))+
+    (d.hsContrat?L('Heures sup du contrat ('+F.hours(d.hsContratH)+')',F.eur2.format(d.hsContrat)):'')+
+    L('Heures sup ('+F.hours(r.supDone-(d.hsContratH||0))+')',F.eur2.format(d.hs))+
     (d.abs?L('Absences non payées','−'+F.eur2.format(d.abs),'neg'):'')+
     (d.precarite?L('Prime de précarité 10 %',F.eur2.format(d.precarite)):'')+
     (d.icp?L('Indemnité de congés 10 %',F.eur2.format(d.icp)):'')+
     L('Cotisations ('+Math.round(d.cotisRate*100)+' %)','−'+F.eur2.format(d.cotis),'neg')+
     (d.paniers?L('Paniers repas',F.eur2.format(d.paniers)):'')+
-    L('Net attendu',F.eur2.format(d.net),'total')+
+    L('Net avant impôt attendu',F.eur2.format(d.net),'total')+
+    (d.finContrat?L('Mis de côté pour la fin du CDD (brut)',F.eur2.format(d.finContrat)):'')+
     (r.netPaid?L('Net sur votre fiche',F.eur2.format(r.netPaid)):'')+'</div>';
   html+='<a class="btn btn-blue" href="app.html">Suivre mes heures chaque jour <span class="arrow">→</span></a>';
   html+='<p class="muted" style="font-size:13px;margin:0">Estimation selon les règles générales. Votre convention collective peut prévoir mieux.</p>';
