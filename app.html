@@ -17,6 +17,11 @@ body{font-size:16px}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:14px}
 .plan{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:5px 10px;border:1px solid var(--line);color:var(--muted);background:var(--paper)}
 .plan.on{background:var(--blue);color:var(--blue-ink);border-color:transparent}
+.top{flex-wrap:wrap;row-gap:10px}
+.sitenav{flex-basis:100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:-2px}
+.sitenav::-webkit-scrollbar{display:none}
+.sitenav a{flex:none;font-size:12.5px;font-weight:600;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 9px;white-space:nowrap}
+.sitenav a:hover{border-color:var(--blue);color:var(--blue)}
 .banner{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--paper);border:1px dashed var(--yellow);border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:14px}
 .banner .linkbtn{background:none;border:0;padding:0;font-weight:700;text-decoration:underline;text-underline-offset:3px;font-size:14px}
 section.v{display:flex;flex-direction:column;gap:14px}
@@ -119,6 +124,11 @@ h3{font-family:var(--display);font-size:18px;margin:0}
   <header class="top">
     <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>Fin de chantier</a>
     <span id="plan" class="plan">Gratuit</span>
+    <nav class="sitenav" aria-label="Site">
+      <a href="index.html">← Accueil</a>
+      <a href="index.html#comment">Comment ça marche</a>
+      <a href="index.html#tarifs">Tarifs</a>
+    </nav>
   </header>
 
   <div id="sampleBanner" class="banner" hidden>
