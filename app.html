@@ -117,6 +117,21 @@ h3{font-family:var(--display);font-size:18px;margin:0}
 .tab[aria-selected="true"]{color:var(--blue);background:var(--blue-soft)}
 .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:40;font-size:15px;max-width:calc(100% - 32px)}
 @media (max-width:380px){.day{min-height:56px}.day .amt{font-size:12px}.big{font-size:44px}}
+
+/* heures depuis une photo */
+.photobtn{display:flex;align-items:center;justify-content:center;gap:8px}
+.photobtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.photobtn .plan{padding:3px 8px;font-size:11px}
+.prows{display:flex;flex-direction:column;gap:8px}
+.prow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px}
+.prow.off{opacity:.5}
+.prow input[type=checkbox]{width:24px;height:24px;accent-color:var(--blue)}
+.prow .who{display:flex;flex-direction:column;gap:2px;min-width:0}
+.prow .who span{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .hh{display:flex;gap:6px;align-items:center}
+.prow .hh label{display:flex;flex-direction:column;font-size:11px;color:var(--muted);font-weight:600;gap:2px}
+.prow .hh input{width:62px;padding:8px 6px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-weight:700;text-align:center;background:var(--paper)}
+.pill.warn{background:var(--hl);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -149,6 +164,8 @@ h3{font-family:var(--display);font-size:18px;margin:0}
       </div>
     </div>
     <button class="btn btn-blue block" id="todayBtn" type="button">＋ Noter ma journée d'aujourd'hui</button>
+    <button class="btn btn-line block photobtn" id="photoBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Remplir mes heures avec une photo<span class="plan on">Plus</span></button>
+    <input type="file" id="photoIn" accept="image/*" hidden>
     <div class="card stack">
       <div class="calhead">
         <button class="navbtn" id="prevM" type="button" aria-label="Mois précédent">‹</button>
@@ -240,6 +257,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
       <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">
         <li>Vérifications illimitées chaque mois</li>
         <li>Photo de la fiche de paie lue par l'IA</li>
+        <li>Heures remplies depuis une photo</li>
         <li>Prévision de la paie du mois prochain</li>
       </ul>
       <button class="btn btn-blue block" id="subBtn" type="button">Essayer Plus (aperçu)</button>
@@ -575,6 +593,101 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-k]')
 $('prevM').addEventListener('click',function(){view.m--;if(view.m<0){view.m=11;view.y--}render()});
 $('nextM').addEventListener('click',function(){view.m++;if(view.m>11){view.m=0;view.y++}render()});
 $('todayBtn').addEventListener('click',function(){openDay(TODAY)});
+
+/* ---------- heures depuis une photo (Plus) ---------- */
+function sheet(inner){
+  var host=$('sheetHost');
+  host.innerHTML='<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="phT"><div class="grab"></div>'+inner+'</div></div>';
+  function close(){host.innerHTML='';document.removeEventListener('keydown',onKey)}
+  function onKey(ev){if(ev.key==='Escape')close()}
+  document.addEventListener('keydown',onKey);
+  $('scrim').addEventListener('click',function(ev){if(ev.target.id==='scrim'||ev.target.hasAttribute('data-close'))close()});
+  return close;
+}
+function photoMsg(title,text,retry){
+  sheet('<div><div class="eyebrow">Photo</div><h2 id="phT">'+title+'</h2></div><p style="margin:0">'+text+'</p>'+
+    '<div class="row">'+(retry?'<button class="btn btn-blue" id="phRetry" type="button">Reprendre une photo</button>':'')+'<button class="btn btn-line" data-close type="button">Fermer</button></div>');
+  if(retry) $('phRetry').addEventListener('click',function(){$('sheetHost').innerHTML='';$('photoIn').click()});
+}
+// Réduit la photo (grand côté 2000 px, JPEG) pour rester sous la limite d'envoi
+function shrink(file){
+  return new Promise(function(ok,ko){
+    var url=URL.createObjectURL(file), img=new Image();
+    img.onload=function(){
+      var r=Math.min(1,2000/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement('canvas');
+      c.width=Math.round(img.naturalWidth*r); c.height=Math.round(img.naturalHeight*r);
+      var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);
+      var q=.85, d=c.toDataURL('image/jpeg',q); while(d.length>3.8e6&&q>.4){q-=.15;d=c.toDataURL('image/jpeg',q)}
+      ok(d.split(',')[1]);
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);ko(new Error('image'))};
+    img.src=url;
+  });
+}
+function readPhoto(file){
+  sheet('<div><div class="eyebrow">Photo</div><h2 id="phT">Lecture de vos heures…</h2></div><div class="row" style="align-items:center"><span class="spin"></span><span class="muted">L\'IA cherche les jours et les heures. Cela prend quelques secondes.</span></div>');
+  shrink(file).then(function(b64){
+    return fetch('api/read-hours',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'image/jpeg',image:b64,today:TODAY,daily:S.settings.daily})})
+      .then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {status:r.status,j:j}})});
+  }).then(function(x){
+    if(!$('phT')) return; // fermé entre-temps
+    if(x.status===503||x.status===404) return photoMsg('Bientôt disponible','La lecture des photos n\'est pas encore branchée. En attendant, touchez un jour du calendrier pour noter vos heures.');
+    if(x.status!==200) return photoMsg('Photo non lue',esc(x.j.error||'Le service ne répond pas, réessayez.'),true);
+    if(!x.j.readable) return photoMsg('Aucune heure trouvée','On ne trouve pas d\'heures de travail sur cette photo. Prenez le document bien à plat, en entier et avec de la lumière.',true);
+    reviewPhoto(x.j);
+  }).catch(function(){
+    if($('phT')) photoMsg('Photo non lue','Impossible d\'envoyer la photo. Vérifiez votre connexion et réessayez.',true);
+  });
+}
+function reviewPhoto(res){
+  var daily=S.settings.daily;
+  var rows=res.days.slice().sort(function(a,b){return a.date<b.date?-1:1}).map(function(d){
+    var s=d.type!=='work'?0:(d.sup>0?Math.min(d.sup,d.hours):Math.max(0,d.hours-daily));
+    return {k:d.date,t:d.type,n:d.type==='work'?Math.max(0,d.hours-s):0,s:s,note:d.note,unsure:d.unsure};
+  });
+  function num(v){return String(Math.round(v*100)/100).replace('.',',')}
+  var html=rows.map(function(r,i){
+    var dt=F.parse(r.k), had=S.sample?null:S.days[r.k];
+    var sub=[]; if(r.note) sub.push(esc(r.note)); if(had) sub.push('remplace ce qui est noté');
+    return '<div class="prow" data-i="'+i+'"><input type="checkbox" checked aria-label="Garder ce jour">'+
+      '<div class="who"><b>'+cap(DOWL[dt.getDay()])+' '+dt.getDate()+' '+MONTHS[dt.getMonth()]+(r.unsure?' <span class="pill warn">à vérifier</span>':'')+'</b>'+(sub.length?'<span>'+sub.join(' · ')+'</span>':'')+'</div>'+
+      (r.t==='work'?'<div class="hh"><label>Heures<input type="text" inputmode="decimal" data-f="n" value="'+num(r.n)+'"></label><label>Sup<input type="text" inputmode="decimal" data-f="s" value="'+num(r.s)+'"></label></div>'
+                  :'<span class="pill p25">'+TYPES[r.t]+'</span>')+'</div>';
+  }).join('');
+  var close=sheet('<div><div class="eyebrow">Photo lue</div><h2 id="phT">'+rows.length+' jour'+(rows.length>1?'s':'')+' trouvé'+(rows.length>1?'s':'')+'</h2></div>'+
+    '<p class="muted" style="margin:0;font-size:14px">Vérifiez avant d\'enregistrer : corrigez un chiffre ou décochez un jour. Au-delà de '+F.hours(daily)+' par jour, le reste est compté en heures sup.'+(res.remark?' <b>'+esc(res.remark)+'</b>':'')+'</p>'+
+    '<div class="prows">'+html+'</div>'+
+    '<div class="row"><button class="btn btn-blue" id="phSave" type="button"></button><button class="btn btn-line" data-close type="button">Annuler</button></div>');
+  var host=$('sheetHost');
+  function count(){var c=host.querySelectorAll('.prow input[type=checkbox]:checked').length;$('phSave').textContent=c?'Enregistrer '+c+' jour'+(c>1?'s':''):'Aucun jour choisi';$('phSave').disabled=!c}
+  host.querySelectorAll('.prow input[type=checkbox]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.prow').classList.toggle('off',!cb.checked);count()})});
+  count();
+  $('phSave').addEventListener('click',function(){
+    if(S.sample){S.days={};S.sample=false}
+    var saved=0, first=null;
+    host.querySelectorAll('.prow').forEach(function(el){
+      if(!el.querySelector('input[type=checkbox]').checked) return;
+      var r=rows[+el.dataset.i], wd=F.parse(r.k).getDay();
+      function val(f){var i=el.querySelector('[data-f="'+f+'"]');var v=parseFloat(String(i?i.value:0).replace(',','.'));return isNaN(v)?0:Math.max(0,Math.min(16,Math.round(v*4)/4))}
+      var e={t:r.t,n:0,s:0,p:false,note:(r.note||'').slice(0,60)};
+      if(r.t==='work'){e.n=val('n');e.s=val('s');e.p=wd>=1&&wd<=5&&e.n>0;if(!e.n&&!e.s)return}
+      S.days[r.k]=e; saved++; if(!first||r.k<first) first=r.k;
+    });
+    save(); close();
+    if(first){var d=F.parse(first);view={y:d.getFullYear(),m:d.getMonth()}}
+    go('mois'); render(); toast(saved+' jour'+(saved>1?'s':'')+' ajouté'+(saved>1?'s':''));
+  });
+}
+$('photoBtn').addEventListener('click',function(){
+  if(isPlus()){$('photoIn').click();return}
+  sheet('<div><div class="eyebrow">Fin de chantier Plus</div><h2 id="phT">Vos heures depuis une photo</h2></div>'+
+    '<p style="margin:0">Photographiez votre feuille de pointage, votre planning ou votre carnet. L\'IA retrouve les jours et les heures, vous vérifiez, et tout est rempli.</p>'+
+    '<div class="row"><button class="btn btn-blue" id="phPlus" type="button">Essayer Plus (aperçu)</button><button class="btn btn-line" data-close type="button">Plus tard</button></div>'+
+    '<span class="muted" style="font-size:13px">Aperçu : aucun paiement n\'est demandé.</span>');
+  $('phPlus').addEventListener('click',function(){F.store.set('fdc-plus',true);$('sheetHost').innerHTML='';render();$('photoIn').click()});
+});
+$('photoIn').addEventListener('change',function(){var f=this.files&&this.files[0];this.value='';if(f)readPhoto(f)});
 $('clearSample').addEventListener('click',function(){S.days={};S.sample=false;save();render();toast('Exemple effacé, à vous de jouer')});
 
 var supAdd=1; $('supDate').value=TODAY;

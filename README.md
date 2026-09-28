@@ -9,6 +9,7 @@ Site pour vérifier que ses heures (et ses heures sup) ont bien été payées.
 - `robots.txt`, `sitemap.xml` : pour que Google trouve le site.
 
 - `api/send-report.js` : fonction Vercel qui envoie le relevé d'heures à l'employeur par e-mail (option Plus).
+- `api/read-hours.js` : fonction Vercel qui lit une photo d'heures (feuille de pointage, planning, carnet) avec Claude et propose les jours trouvés (option Plus). Rien n'est enregistré sans vérification.
 
 Les heures restent dans le navigateur de la personne. Seul le relevé passe par le serveur au moment de l'envoi, sans être gardé.
 
@@ -23,6 +24,15 @@ Les heures restent dans le navigateur de la personne. Seul le relevé passe par 
 5. **Deployments → Redeploy**. Tant que ces variables manquent, l'app propose d'envoyer le relevé depuis la boîte mail du téléphone.
 
 L'envoi part à la première ouverture de l'app après la fin de la semaine (le lundi) ou du mois (le 1er).
+
+### Brancher la lecture des heures en photo
+
+1. Créez un compte sur https://console.anthropic.com et ajoutez un moyen de paiement (**Settings → Billing**, quelques euros suffisent pour commencer).
+2. **API Keys → Create Key**, puis copiez la clé (elle commence par `sk-ant-`).
+3. Dans Vercel → projet → **Settings → Environment Variables**, ajoutez `ANTHROPIC_API_KEY` = la clé.
+4. **Deployments → Redeploy**. Tant que la clé manque, l'app affiche « Bientôt disponible » à la place de la lecture.
+
+Chaque photo coûte quelques centimes. La photo n'est pas gardée : elle part à Claude, les jours reviennent, c'est tout.
 
 ---
 
