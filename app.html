@@ -247,6 +247,23 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <div class="muted" id="fcWhy" style="font-size:14px"></div>
         <div class="bars" id="fcBars"></div>
       </div>
+      <div class="card stack" id="bossCard">
+        <div class="row" style="justify-content:space-between;align-items:center"><h2>Relevé au patron</h2><span class="plan on">Plus</span></div>
+        <p class="muted" style="margin:0;font-size:14px">Un e-mail avec vos heures et vos heures sup part tout seul à la fin de chaque semaine ou de chaque mois. Rien n'est envoyé tant que la case n'est pas cochée.</p>
+        <label class="checkrow"><input type="checkbox" id="bossOn"><span><b>Envoyer automatiquement mon relevé</b><br><span class="muted" style="font-size:13px" id="bossState">Désactivé</span></span></label>
+        <div id="bossForm" class="stack">
+          <div class="field"><label for="bossTo">E-mail de mon patron</label><input id="bossTo" type="email" inputmode="email" autocomplete="off" placeholder="ex. paie@entreprise.fr"></div>
+          <div class="two">
+            <div class="field"><label for="bossName">Mon nom</label><input id="bossName" type="text" maxlength="60" autocomplete="name" placeholder="ex. Karim Benali"></div>
+            <div class="field"><label for="bossMe">Mon e-mail (copie)</label><input id="bossMe" type="email" inputmode="email" autocomplete="email" placeholder="facultatif"></div>
+          </div>
+          <div class="field"><span class="lbl">Fréquence</span>
+            <div class="chips" data-freq><button type="button" class="chip" data-v="week">Chaque semaine</button><button type="button" class="chip" data-v="month">Chaque mois</button></div>
+            <span class="hint" id="bossNext"></span></div>
+          <div class="row"><button class="btn btn-line" id="bossPreview" type="button">Voir le relevé</button><button class="btn btn-line" id="bossNow" type="button">Envoyer maintenant</button></div>
+          <div id="bossOut"></div>
+        </div>
+      </div>
       <button class="btn btn-danger" id="unsubBtn" type="button">Arrêter l'abonnement (aperçu)</button>
     </div>
   </section>
@@ -464,7 +481,7 @@ function renderPaie(){
   $('plusPitch').hidden=plus; $('plusArea').hidden=!plus;
   $('chkBtn').disabled=!plus&&used;
   $('freeLeft').textContent=plus?'Vérifications illimitées avec Plus':used?'Votre vérification gratuite est utilisée. Passez à Plus pour continuer.':'1 vérification gratuite, puis 2 €/mois.';
-  if(plus) renderForecast();
+  if(plus){renderForecast();renderBoss();}
 }
 function renderForecast(){
   var st=S.settings, nx=new Date(today.getFullYear(),today.getMonth()+1,1,12), y=nx.getFullYear(), m=nx.getMonth();
@@ -581,6 +598,95 @@ $('chkBtn').addEventListener('click',function(){
 });
 $('subBtn').addEventListener('click',function(){F.store.set('fdc-plus',true);render();toast('Plus activé (aperçu)')});
 $('unsubBtn').addEventListener('click',function(){F.store.set('fdc-plus',false);$('aiOut').innerHTML='';render();toast('Abonnement arrêté')});
+/* ---------- relevé envoyé au patron (Plus) ---------- */
+var BOSS_KEY='fdc-boss';
+function bossGet(){return F.store.get(BOSS_KEY,null)||{on:false,to:'',name:'',me:'',freq:'week',from:null,last:null}}
+function bossSet(b){F.store.set(BOSS_KEY,b)}
+function validMail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s||'')}
+function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
+function fmtD(d){return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}
+// Période en cours (jusqu'à aujourd'hui) ou dernière période terminée
+function period(freq,done){
+  var from,to,key,label;
+  if(freq==='month'){
+    var y=today.getFullYear(),m=today.getMonth()-(done?1:0); from=new Date(y,m,1,12); to=done?new Date(y,m+1,0,12):today;
+    key=F.iso(from).slice(0,7); label=MONTHS[from.getMonth()]+' '+from.getFullYear();
+  }else{
+    from=F.parse(mondayOf(today)); if(done) from=addDays(from,-7); to=done?addDays(from,6):today;
+    key=F.iso(from); label='semaine du '+fmtD(from)+' au '+fmtD(addDays(from,6));
+  }
+  return {from:from,to:to,key:key,label:label,freq:freq};
+}
+function nextSend(freq){var p=period(freq,false);return freq==='month'?new Date(p.from.getFullYear(),p.from.getMonth()+1,1,12):addDays(p.from,7)}
+function report(p){
+  var sp=supSplit(), rows=[], t={n:0,s:0,s25:0,s50:0,s10:0,cp:0,maladie:0,absent:0};
+  Object.keys(S.days).sort().forEach(function(k){var d=F.parse(k),e=S.days[k];if(d<p.from||d>p.to)return;
+    if(e.t==='work'){t.n+=e.n;t.s+=e.s||0;var x=sp[k]||{s10:0,s25:0,s50:0};t.s10+=x.s10;t.s25+=x.s25;t.s50+=x.s50;}else t[e.t]++;
+    rows.push([cap(DOWL[d.getDay()])+' '+d.getDate()+' '+MONTHS[d.getMonth()],TYPES[e.t],e.t==='work'?F.hours(e.n):'',e.t==='work'&&e.s?F.hours(e.s):'',e.note||'']);});
+  var tot=[['Heures travaillées',F.hours(t.n+t.s)],['dont heures sup',F.hours(t.s)]];
+  if(t.s10) tot.push(['Heures sup à +10 %',F.hours(t.s10)]);
+  if(t.s25) tot.push(['Heures sup à +25 %',F.hours(t.s25)]);
+  if(t.s50) tot.push(['Heures sup à +50 %',F.hours(t.s50)]);
+  if(t.cp) tot.push(['Congés',t.cp+' j']); if(t.maladie) tot.push(['Maladie',t.maladie+' j']); if(t.absent) tot.push(['Absences',t.absent+' j']);
+  var b=bossGet(), who=b.name||'Votre salarié';
+  return {title:'Relevé d\'heures · '+p.label, name:who, rows:rows, totals:tot};
+}
+function reportHtml(r){
+  var th='<tr>'+['Jour','','Heures','Sup','Note'].map(function(h){return '<th style="text-align:left;padding:6px 8px;border-bottom:1.5px solid var(--ink);font-size:13px">'+h+'</th>'}).join('')+'</tr>';
+  var tr=r.rows.map(function(x){return '<tr>'+x.map(function(c){return '<td style="padding:6px 8px;border-bottom:1px dashed var(--line);font-size:14px">'+esc(c)+'</td>'}).join('')+'</tr>'}).join('');
+  var L=function(a,b){return '<div class="l"><span>'+esc(a)+'</span><span class="num">'+esc(b)+'</span></div>'};
+  return '<div class="stack" style="gap:10px"><div><div class="eyebrow">Aperçu de l\'e-mail</div><b>'+esc(r.title)+'</b><div class="muted" style="font-size:13px">De la part de '+esc(r.name)+'</div></div>'+
+    (r.rows.length?'<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%">'+th+tr+'</table></div>':'<p class="muted" style="margin:0">Aucun jour noté sur cette période.</p>')+
+    '<div class="lines">'+r.totals.map(function(x){return L(x[0],x[1])}).join('')+'</div></div>';
+}
+function reportText(r){
+  return r.title+'\n'+r.name+'\n\n'+r.rows.map(function(x){return x[0]+' : '+x[1]+(x[2]?' '+x[2]:'')+(x[3]?' + '+x[3]+' sup':'')+(x[4]?' ('+x[4]+')':'')}).join('\n')+
+    '\n\n'+r.totals.map(function(x){return x[0]+' : '+x[1]}).join('\n')+'\n\nEnvoyé avec Fin de chantier';
+}
+function mailtoLink(b,r){return 'mailto:'+encodeURIComponent(b.to)+'?'+(b.me?'cc='+encodeURIComponent(b.me)+'&':'')+'subject='+encodeURIComponent(r.title)+'&body='+encodeURIComponent(reportText(r))}
+function sendReport(p,auto){
+  var b=bossGet(), r=report(p), out=$('bossOut');
+  if(!validMail(b.to)){toast('Ajoutez l\'e-mail de votre patron');return Promise.resolve(false)}
+  if(!auto) out.innerHTML='<div class="row" style="align-items:center"><div class="spin"></div><span>Envoi en cours…</span></div>';
+  return fetch('/api/send-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:b.to,cc:validMail(b.me)?b.me:'',name:r.name,title:r.title,rows:r.rows,totals:r.totals})})
+    .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,status:res.status,j:j}})})
+    .catch(function(){return {ok:false,status:0,j:{}}})
+    .then(function(x){
+      if(x.ok){if(auto){b.last=p.key;bossSet(b)}out.innerHTML='<div class="verdict ok"><span class="t">Relevé envoyé ✓</span><p>'+esc(r.title)+' envoyé à '+esc(b.to)+(b.me?', copie à '+esc(b.me):'')+'.</p></div>';renderBoss();return true}
+      var why=x.status===503?'L\'envoi automatique n\'est pas encore branché sur le site.':x.status===0?'Pas de connexion internet.':(x.j.error||'L\'envoi a échoué.');
+      out.innerHTML='<div class="verdict ko"><span class="t">'+(auto?'Relevé pas encore parti':'Pas envoyé')+'</span><p>'+esc(why)+' Vous pouvez l\'envoyer depuis votre boîte mail.</p><p><a class="btn btn-blue" style="display:inline-flex;margin-top:6px" href="'+mailtoLink(b,r)+'">Ouvrir ma boîte mail</a></p></div>';
+      return false;
+    });
+}
+// À l'ouverture de l'app : envoie la dernière période terminée si elle n'est pas encore partie
+function bossAuto(){
+  var b=bossGet(); if(!isPlus()||!b.on||!validMail(b.to)||S.sample) return;
+  var p=period(b.freq,true); if(b.last===p.key||!b.from||F.iso(p.to)<b.from) return;
+  if(!report(p).rows.length){b.last=p.key;bossSet(b);return}
+  sendReport(p,true);
+}
+function renderBoss(){
+  var b=bossGet();
+  $('bossOn').checked=!!b.on; $('bossTo').value=b.to||''; $('bossName').value=b.name||''; $('bossMe').value=b.me||'';
+  document.querySelectorAll('[data-freq] .chip').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v===b.freq?'true':'false')});
+  var nx=nextSend(b.freq);
+  $('bossNext').textContent=b.freq==='month'?'Le relevé du mois part le 1er du mois suivant, à la première ouverture de l\'app.':'Le relevé de la semaine part le lundi suivant, à la première ouverture de l\'app.';
+  $('bossState').textContent=b.on?(validMail(b.to)?'Activé · prochain relevé le '+nx.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' à '+b.to:'Ajoutez l\'e-mail de votre patron'):'Désactivé : rien n\'est envoyé';
+}
+function bossSave(){
+  var b=bossGet(); b.to=$('bossTo').value.trim(); b.name=$('bossName').value.trim(); b.me=$('bossMe').value.trim(); bossSet(b); renderBoss();
+}
+['bossTo','bossName','bossMe'].forEach(function(id){$(id).addEventListener('change',bossSave)});
+$('bossOn').addEventListener('change',function(){
+  var want=this.checked; bossSave(); var b=bossGet();
+  if(want&&!validMail(b.to)){this.checked=false;toast('Ajoutez d\'abord l\'e-mail de votre patron');$('bossTo').focus();return}
+  b.on=want; if(b.on){b.from=TODAY;b.last=null} bossSet(b); renderBoss();
+  if(b.on){$('bossOut').innerHTML=reportHtml(report(period(b.freq,false)));toast('Envoi automatique activé')} else {$('bossOut').innerHTML='';toast('Envoi automatique désactivé')}
+});
+document.querySelector('[data-freq]').addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;var b=bossGet();b.freq=c.dataset.v;bossSet(b);renderBoss();$('bossOut').innerHTML=reportHtml(report(period(b.freq,false)))});
+$('bossPreview').addEventListener('click',function(){bossSave();$('bossOut').innerHTML=reportHtml(report(period(bossGet().freq,false)))});
+$('bossNow').addEventListener('click',function(){bossSave();sendReport(period(bossGet().freq,false),false)});
+
 $('slip').addEventListener('change',function(ev){
   var f=ev.target.files&&ev.target.files[0]; if(!f) return;
   var out=$('aiOut'); out.innerHTML='<div class="row" style="align-items:center"><div class="spin"></div><span>Lecture de « '+esc(f.name)+' »…</span></div>';
@@ -612,6 +718,7 @@ $('wipeYes').addEventListener('click',function(){S.days={};S.sample=false;save()
 var tt; function toast(msg){var t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},2200)}
 
 render();
+bossAuto();
 var h=(location.hash||'').replace('#',''); if(['mois','sup','conges','paie','contrat'].indexOf(h)>=0) go(h);
 })();
 </script>

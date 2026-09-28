@@ -8,7 +8,21 @@ Site pour vérifier que ses heures (et ses heures sup) ont bien été payées.
 - `site.css` : les couleurs et les styles communs.
 - `robots.txt`, `sitemap.xml` : pour que Google trouve le site.
 
-Aujourd'hui tout fonctionne sans serveur : les données restent dans le navigateur de la personne.
+- `api/send-report.js` : fonction Vercel qui envoie le relevé d'heures au patron par e-mail (option Plus).
+
+Les heures restent dans le navigateur de la personne. Seul le relevé passe par le serveur au moment de l'envoi, sans être gardé.
+
+### Brancher l'envoi des relevés par e-mail
+
+1. Créez un compte gratuit sur https://resend.com (3 000 e-mails par mois offerts).
+2. **Domains → Add Domain** : ajoutez votre domaine (ex. `findechantier.fr`) et copiez les lignes DNS qu'il donne chez votre registrar. Sans domaine vérifié, Resend n'envoie qu'à votre propre adresse.
+3. **API Keys → Create API Key**, puis copiez la clé.
+4. Dans Vercel → projet → **Settings → Environment Variables**, ajoutez :
+   - `RESEND_API_KEY` = la clé
+   - `MAIL_FROM` = `Fin de chantier <releve@findechantier.fr>`
+5. **Deployments → Redeploy**. Tant que ces variables manquent, l'app propose d'envoyer le relevé depuis la boîte mail du téléphone.
+
+L'envoi part à la première ouverture de l'app après la fin de la semaine (le lundi) ou du mois (le 1er).
 
 ---
 
