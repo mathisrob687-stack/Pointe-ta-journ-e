@@ -8,7 +8,7 @@ Site pour vérifier que ses heures (et ses heures sup) ont bien été payées.
 - `site.css` : les couleurs et les styles communs.
 - `robots.txt`, `sitemap.xml` : pour que Google trouve le site.
 
-- `api/send-report.js` : fonction Vercel qui envoie le relevé d'heures au patron par e-mail (option Plus).
+- `api/send-report.js` : fonction Vercel qui envoie le relevé d'heures à l'employeur par e-mail (option Plus).
 
 Les heures restent dans le navigateur de la personne. Seul le relevé passe par le serveur au moment de l'envoi, sans être gardé.
 

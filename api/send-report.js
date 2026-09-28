@@ -1,4 +1,4 @@
-// Envoie le relevé d'heures au patron, via Resend (https://resend.com).
+// Envoie le relevé d'heures à l'employeur, via Resend (https://resend.com).
 // Variables à définir dans Vercel → Settings → Environment Variables :
 //   RESEND_API_KEY  la clé API Resend
 //   MAIL_FROM       l'expéditeur, ex. "Fin de chantier <releve@findechantier.fr>" (domaine vérifié chez Resend)

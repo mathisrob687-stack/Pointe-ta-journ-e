@@ -248,11 +248,11 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <div class="bars" id="fcBars"></div>
       </div>
       <div class="card stack" id="bossCard">
-        <div class="row" style="justify-content:space-between;align-items:center"><h2>Relevé au patron</h2><span class="plan on">Plus</span></div>
+        <div class="row" style="justify-content:space-between;align-items:center"><h2>Relevé à l'employeur</h2><span class="plan on">Plus</span></div>
         <p class="muted" style="margin:0;font-size:14px">Un e-mail avec vos heures et vos heures sup part tout seul à la fin de chaque semaine ou de chaque mois. Rien n'est envoyé tant que la case n'est pas cochée.</p>
         <label class="checkrow"><input type="checkbox" id="bossOn"><span><b>Envoyer automatiquement mon relevé</b><br><span class="muted" style="font-size:13px" id="bossState">Désactivé</span></span></label>
         <div id="bossForm" class="stack">
-          <div class="field"><label for="bossTo">E-mail de mon patron</label><input id="bossTo" type="email" inputmode="email" autocomplete="off" placeholder="ex. paie@entreprise.fr"></div>
+          <div class="field"><label for="bossTo">E-mail de mon employeur</label><input id="bossTo" type="email" inputmode="email" autocomplete="off" placeholder="ex. paie@entreprise.fr"></div>
           <div class="two">
             <div class="field"><label for="bossName">Mon nom</label><input id="bossName" type="text" maxlength="60" autocomplete="name" placeholder="ex. Karim Benali"></div>
             <div class="field"><label for="bossMe">Mon e-mail (copie)</label><input id="bossMe" type="email" inputmode="email" autocomplete="email" placeholder="facultatif"></div>
@@ -598,7 +598,7 @@ $('chkBtn').addEventListener('click',function(){
 });
 $('subBtn').addEventListener('click',function(){F.store.set('fdc-plus',true);render();toast('Plus activé (aperçu)')});
 $('unsubBtn').addEventListener('click',function(){F.store.set('fdc-plus',false);$('aiOut').innerHTML='';render();toast('Abonnement arrêté')});
-/* ---------- relevé envoyé au patron (Plus) ---------- */
+/* ---------- relevé envoyé à l'employeur (Plus) ---------- */
 var BOSS_KEY='fdc-boss';
 function bossGet(){return F.store.get(BOSS_KEY,null)||{on:false,to:'',name:'',me:'',freq:'week',from:null,last:null}}
 function bossSet(b){F.store.set(BOSS_KEY,b)}
@@ -646,7 +646,7 @@ function reportText(r){
 function mailtoLink(b,r){return 'mailto:'+encodeURIComponent(b.to)+'?'+(b.me?'cc='+encodeURIComponent(b.me)+'&':'')+'subject='+encodeURIComponent(r.title)+'&body='+encodeURIComponent(reportText(r))}
 function sendReport(p,auto){
   var b=bossGet(), r=report(p), out=$('bossOut');
-  if(!validMail(b.to)){toast('Ajoutez l\'e-mail de votre patron');return Promise.resolve(false)}
+  if(!validMail(b.to)){toast('Ajoutez l\'e-mail de votre employeur');return Promise.resolve(false)}
   if(!auto) out.innerHTML='<div class="row" style="align-items:center"><div class="spin"></div><span>Envoi en cours…</span></div>';
   return fetch('/api/send-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:b.to,cc:validMail(b.me)?b.me:'',name:r.name,title:r.title,rows:r.rows,totals:r.totals})})
     .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,status:res.status,j:j}})})
@@ -671,7 +671,7 @@ function renderBoss(){
   document.querySelectorAll('[data-freq] .chip').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v===b.freq?'true':'false')});
   var nx=nextSend(b.freq);
   $('bossNext').textContent=b.freq==='month'?'Le relevé du mois part le 1er du mois suivant, à la première ouverture de l\'app.':'Le relevé de la semaine part le lundi suivant, à la première ouverture de l\'app.';
-  $('bossState').textContent=b.on?(validMail(b.to)?'Activé · prochain relevé le '+nx.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' à '+b.to:'Ajoutez l\'e-mail de votre patron'):'Désactivé : rien n\'est envoyé';
+  $('bossState').textContent=b.on?(validMail(b.to)?'Activé · prochain relevé le '+nx.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' à '+b.to:'Ajoutez l\'e-mail de votre employeur'):'Désactivé : rien n\'est envoyé';
 }
 function bossSave(){
   var b=bossGet(); b.to=$('bossTo').value.trim(); b.name=$('bossName').value.trim(); b.me=$('bossMe').value.trim(); bossSet(b); renderBoss();
@@ -679,7 +679,7 @@ function bossSave(){
 ['bossTo','bossName','bossMe'].forEach(function(id){$(id).addEventListener('change',bossSave)});
 $('bossOn').addEventListener('change',function(){
   var want=this.checked; bossSave(); var b=bossGet();
-  if(want&&!validMail(b.to)){this.checked=false;toast('Ajoutez d\'abord l\'e-mail de votre patron');$('bossTo').focus();return}
+  if(want&&!validMail(b.to)){this.checked=false;toast('Ajoutez d\'abord l\'e-mail de votre employeur');$('bossTo').focus();return}
   b.on=want; if(b.on){b.from=TODAY;b.last=null} bossSet(b); renderBoss();
   if(b.on){$('bossOut').innerHTML=reportHtml(report(period(b.freq,false)));toast('Envoi automatique activé')} else {$('bossOut').innerHTML='';toast('Envoi automatique désactivé')}
 });
