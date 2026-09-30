@@ -823,18 +823,64 @@ document.querySelector('[data-freq]').addEventListener('click',function(e){var c
 $('bossPreview').addEventListener('click',function(){bossSave();$('bossOut').innerHTML=reportHtml(report(period(bossGet().freq,false)))});
 $('bossNow').addEventListener('click',function(){bossSave();sendReport(period(bossGet().freq,false),false)});
 
+// Analyse IA de la fiche de paie : photo réduite ou PDF, lue par api/read-payslip
+function fileB64(file){
+  return new Promise(function(ok,ko){var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1])};r.onerror=ko;r.readAsDataURL(file)});
+}
+function slipExample(out){
+  var t=monthData(today.getFullYear(),today.getMonth()), st=S.settings, paid=Math.max(0,Math.floor(t.s)-4), miss=t.s-paid;
+  var L=function(a,b,ok){return '<div class="l"><span>'+a+'</span><span class="num" style="color:var(--'+(ok?'ink':'bad')+')">'+(ok?'✓ ':'⚠ ')+b+'</span></div>'};
+  out.innerHTML='<div class="stack"><p class="muted" style="margin:0;font-size:14px"><b>Bientôt disponible</b> : la lecture des fiches n\'est pas encore branchée. Voici un exemple du résultat, calculé avec vos heures.</p><div class="lines">'+
+    L('Heures de base payées',F.hours(t.pay.baseH),true)+L('Taux horaire',F.eur2.format(st.rate),true)+
+    L('Heures sup payées',F.hours(paid)+' sur '+F.hours(t.s)+' faites',miss<=0.24)+L('Paniers payés',t.pan+' × '+F.eur2.format(st.panier),true)+'</div>'+
+    (miss>0.24?'<div class="verdict ko"><span class="t">Exemple : 1 erreur trouvée</span><p>'+F.hours(miss)+' sup non payées, soit environ '+F.eur0.format(miss*st.rate*1.25)+' brut.</p></div>':'<div class="verdict ok"><span class="t">Exemple : aucune erreur ✓</span></div>')+'</div>';
+}
+function slipResult(out,r){
+  var st=S.settings, y=today.getFullYear(), m=today.getMonth();
+  if(r.month){y=+r.month.slice(0,4);m=+r.month.slice(5,7)-1}
+  var t=monthData(y,m), noted=Object.keys(S.days).some(function(k){return inMonth(k,y,m)});
+  var rate=r.rate||st.rate, errs=[], lost=0;
+  var L=function(a,b,ok){return '<div class="l"><span>'+a+'</span><span class="num" style="color:var(--'+(ok?'ink':'bad')+')">'+(ok?'✓ ':'⚠ ')+b+'</span></div>'};
+  var I=function(a,b){return '<div class="l"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
+  var rows='';
+  if(r.rate) rows+=L('Taux horaire',F.eur2.format(r.rate)+(Math.abs(r.rate-st.rate)>0.01?' (contrat : '+F.eur2.format(st.rate)+')':''),Math.abs(r.rate-st.rate)<=0.01||r.rate>st.rate);
+  if(r.rate&&r.rate<st.rate-0.01) errs.push('Le taux horaire de la fiche ('+F.eur2.format(r.rate)+') est plus bas que celui de votre contrat ('+F.eur2.format(st.rate)+').');
+  if(r.baseHours) rows+=I('Heures de base payées',F.hours(r.baseHours));
+  var paidSup=r.sup10+r.sup25+r.sup50;
+  if(noted){
+    var doneSup=t.pay.hsContratH+t.s10+t.s25+t.s50, miss=F.quarter(doneSup-paidSup);
+    rows+=L('Heures sup payées',F.hours(paidSup)+' sur '+F.hours(doneSup)+' faites',miss<0.25);
+    if(miss>=0.25){var v=miss*rate*1.25;lost+=v;errs.push(F.hours(miss)+' sup non payées, soit environ '+F.eur0.format(v)+' brut.')}
+    var pa=r.panierAmount||st.panier, missP=t.pan-r.paniers;
+    rows+=L('Paniers payés',r.paniers+' sur '+t.pan+' notés',missP<=0);
+    if(missP>0){lost+=missP*pa;errs.push(missP+' panier'+(missP>1?'s':'')+' non payé'+(missP>1?'s':'')+', soit '+F.eur0.format(missP*pa)+'.')}
+  } else {
+    rows+=I('Heures sup payées',F.hours(paidSup))+I('Paniers payés',String(r.paniers));
+  }
+  if(r.brut) rows+=I('Brut',F.eur2.format(r.brut));
+  if(r.netAvantImpot) rows+=I('Net avant impôt sur la fiche',F.eur2.format(r.netAvantImpot))+(noted?I('Net avant impôt estimé par l\'app',F.eur2.format(t.pay.net)):'');
+  if(r.netAPayer) rows+=I('Net payé (après impôt)',F.eur2.format(r.netAPayer));
+  if(r.cpAcquis) rows+=I('Solde de congés sur la fiche',String(r.cpAcquis).replace('.',',')+' j');
+  var head='<p class="muted" style="margin:0;font-size:14px">Fiche de '+MONTHS[m]+' '+y+(noted?', comparée avec vos heures notées.':'. Notez vos heures de ce mois dans le calendrier pour que l\'app les compare.')+'</p>';
+  var verdict=!noted?'':errs.length
+    ?'<div class="verdict ko"><span class="t">'+errs.length+' erreur'+(errs.length>1?'s':'')+' trouvée'+(errs.length>1?'s':'')+'</span>'+errs.map(function(e){return '<p style="margin:0">'+esc(e)+'</p>'}).join('')+(lost?'<p style="margin:0"><b>Il manque environ '+F.eur0.format(lost)+'.</b> Montrez ce résultat au service paie.</p>':'')+'</div>'
+    :'<div class="verdict ok"><span class="t">Aucune erreur trouvée ✓</span></div>';
+  out.innerHTML='<div class="stack">'+head+'<div class="lines">'+rows+'</div>'+verdict+(r.remark?'<p class="muted" style="margin:0;font-size:13px">'+esc(r.remark)+'</p>':'')+'</div>';
+}
 $('slip').addEventListener('change',function(ev){
-  var f=ev.target.files&&ev.target.files[0]; if(!f) return;
-  var out=$('aiOut'); out.innerHTML='<div class="row" style="align-items:center"><div class="spin"></div><span>Lecture de « '+esc(f.name)+' »…</span></div>';
-  setTimeout(function(){
-    var t=monthData(today.getFullYear(),today.getMonth()), st=S.settings, paid=Math.max(0,Math.floor(t.s)-4), miss=t.s-paid;
-    var L=function(a,b,ok){return '<div class="l"><span>'+a+'</span><span class="num" style="color:var(--'+(ok?'ink':'bad')+')">'+(ok?'✓ ':'⚠ ')+b+'</span></div>'};
-    out.innerHTML='<div class="stack"><p class="muted" style="margin:0;font-size:14px">Aperçu : l\'IA n\'est pas encore branchée. Voici le type de résultat qu\'elle donnera, calculé avec vos heures.</p><div class="lines">'+
-      L('Heures de base payées',F.hours(t.pay.baseH),true)+L('Taux horaire',F.eur2.format(st.rate),true)+
-      L('Heures sup payées',F.hours(paid)+' sur '+F.hours(t.s)+' faites',miss<=0.24)+L('Paniers payés',t.pan+' × '+F.eur2.format(st.panier),true)+
-      L('Cotisations','taux '+F.STATUTS[st.statut].label.toLowerCase()+' correct',true)+'</div>'+
-      (miss>0.24?'<div class="verdict ko"><span class="t">1 erreur trouvée</span><p>'+F.hours(miss)+' sup non payées, soit environ '+F.eur0.format(miss*st.rate*1.25)+' brut.</p></div>':'<div class="verdict ok"><span class="t">Aucune erreur trouvée ✓</span></div>')+'</div>';
-  },1600);
+  var f=ev.target.files&&ev.target.files[0]; ev.target.value=''; if(!f) return;
+  var out=$('aiOut'), pdf=f.type==='application/pdf';
+  if(pdf&&f.size>3e6){out.innerHTML='<p class="muted" style="margin:0">Ce PDF est trop lourd (3 Mo maximum). Prenez plutôt la fiche en photo.</p>';return}
+  out.innerHTML='<div class="row" style="align-items:center"><div class="spin"></div><span>Lecture de « '+esc(f.name)+' »…</span></div>';
+  (pdf?fileB64(f):shrink(f)).then(function(b64){
+    return fetch('api/read-payslip',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:pdf?'application/pdf':'image/jpeg',file:b64,today:TODAY})})
+      .then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {status:r.status,j:j}})});
+  }).then(function(x){
+    if(x.status===503||x.status===404) return slipExample(out);
+    if(x.status!==200) {out.innerHTML='<p class="muted" style="margin:0">'+esc(x.j.error||'Le service ne répond pas, réessayez.')+'</p>';return}
+    if(!x.j.readable) {out.innerHTML='<p class="muted" style="margin:0">On ne trouve pas de fiche de paie lisible. Prenez-la bien à plat, en entier et avec de la lumière.</p>';return}
+    slipResult(out,x.j);
+  }).catch(function(){out.innerHTML='<p class="muted" style="margin:0">Impossible d\'envoyer la fiche. Vérifiez votre connexion et réessayez.</p>'});
 });
 
 document.querySelectorAll('[data-group]').forEach(function(g){g.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;

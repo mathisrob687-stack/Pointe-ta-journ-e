@@ -2,6 +2,11 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "functions": {
-    "api/read-hours.js": { "maxDuration": 60 }
+    "api/read-hours.js": {
+      "maxDuration": 60
+    },
+    "api/read-payslip.js": {
+      "maxDuration": 60
+    }
   }
 }
