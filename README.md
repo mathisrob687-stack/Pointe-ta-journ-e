@@ -1,4 +1,4 @@
-# Fin de chantier
+# Pointe ta journée
 
 Site pour vérifier que ses heures (et ses heures sup) ont bien été payées.
 
@@ -17,11 +17,11 @@ Les heures restent dans le navigateur de la personne. Seul le relevé passe par 
 ### Brancher l'envoi des relevés par e-mail
 
 1. Créez un compte gratuit sur https://resend.com (3 000 e-mails par mois offerts).
-2. **Domains → Add Domain** : ajoutez votre domaine (ex. `findechantier.fr`) et copiez les lignes DNS qu'il donne chez votre registrar. Sans domaine vérifié, Resend n'envoie qu'à votre propre adresse.
+2. **Domains → Add Domain** : ajoutez votre domaine (ex. `pointetajournee.fr`) et copiez les lignes DNS qu'il donne chez votre registrar. Sans domaine vérifié, Resend n'envoie qu'à votre propre adresse.
 3. **API Keys → Create API Key**, puis copiez la clé.
 4. Dans Vercel → projet → **Settings → Environment Variables**, ajoutez :
    - `RESEND_API_KEY` = la clé
-   - `MAIL_FROM` = `Fin de chantier <releve@findechantier.fr>`
+   - `MAIL_FROM` = `Pointe ta journée <releve@pointetajournee.fr>`
 5. **Deployments → Redeploy**. Tant que ces variables manquent, l'app propose d'envoyer le relevé depuis la boîte mail du téléphone.
 
 L'envoi part à la première ouverture de l'app après la fin de la semaine (le lundi) ou du mois (le 1er).
@@ -57,7 +57,7 @@ Chaque photo coûte quelques centimes. La photo n'est pas gardée : elle part à
 4. Au bout de quelques secondes, le site est en ligne sur une adresse du type `fin-de-chantier.vercel.app`.
 5. À chaque modification poussée sur GitHub, Vercel remet le site à jour tout seul.
 
-Pour un vrai nom de domaine (ex. `findechantier.fr`, environ 10 €/an) : Vercel → votre projet → **Settings → Domains → Add**.
+Pour un vrai nom de domaine (ex. `pointetajournee.fr`, environ 10 €/an) : Vercel → votre projet → **Settings → Domains → Add**.
 Pensez alors à remplacer `fin-de-chantier.vercel.app` dans `index.html` (balise `canonical`), `robots.txt` et `sitemap.xml`.
 
 ### 3. Apparaître sur Google

@@ -1,7 +1,7 @@
 // Envoie le relevé d'heures à l'employeur, via Resend (https://resend.com).
 // Variables à définir dans Vercel → Settings → Environment Variables :
 //   RESEND_API_KEY  la clé API Resend
-//   MAIL_FROM       l'expéditeur, ex. "Fin de chantier <releve@findechantier.fr>" (domaine vérifié chez Resend)
+//   MAIL_FROM       l'expéditeur, ex. "Pointe ta journée <releve@pointetajournee.fr>" (domaine vérifié chez Resend)
 // Sans ces variables, la fonction répond 503 et l'app propose d'envoyer depuis la boîte mail du téléphone.
 
 const MAIL = /^[^\s@<>,;"]+@[^\s@<>,;"]+\.[^\s@<>,;"]{2,}$/;
@@ -28,12 +28,12 @@ function buildHtml(r) {
 <h2 style="margin:0 0 16px;font-size:20px">${esc(r.title)}</h2>
 ${r.rows.length ? `<table style="border-collapse:collapse;width:100%;margin-bottom:18px"><tr>${head}</tr>${rows}</table>` : ''}
 <table style="border-collapse:collapse;width:100%;max-width:360px">${tot}</table>
-<p style="margin:20px 0 0;font-size:12px;color:#777">Relevé tenu par le salarié et envoyé avec Fin de chantier (fin-de-chantier.vercel.app).</p>
+<p style="margin:20px 0 0;font-size:12px;color:#777">Relevé tenu par le salarié et envoyé avec Pointe ta journée (fin-de-chantier.vercel.app).</p>
 </div>`;
 }
 function buildText(r) {
   const rows = r.rows.map((x) => `${x[0]} : ${x[1]}${x[2] ? ' ' + x[2] : ''}${x[3] ? ' + ' + x[3] + ' sup' : ''}${x[4] ? ' (' + x[4] + ')' : ''}`);
-  return `${r.title}\nRelevé d'heures de ${r.name}\n\n${rows.join('\n')}\n\n${r.totals.map((x) => x[0] + ' : ' + x[1]).join('\n')}\n\nEnvoyé avec Fin de chantier`;
+  return `${r.title}\nRelevé d'heures de ${r.name}\n\n${rows.join('\n')}\n\n${r.totals.map((x) => x[0] + ' : ' + x[1]).join('\n')}\n\nEnvoyé avec Pointe ta journée`;
 }
 
 module.exports = async function handler(req, res) {

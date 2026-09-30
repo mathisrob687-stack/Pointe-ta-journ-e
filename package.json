@@ -1,5 +1,5 @@
 {
-  "name": "fin-de-chantier",
+  "name": "pointe-ta-journee",
   "private": true,
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0"

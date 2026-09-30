@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mon mois · Fin de chantier</title>
+<title>Mon mois · Pointe ta journée</title>
 <meta name="description" content="Notez vos heures, heures sup, congés et absences. Voyez ce que chaque jour vous rapporte.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -139,7 +139,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
 <body>
 <div class="app">
   <header class="top">
-    <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>Fin de chantier</a>
+    <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>Pointe ta journée</a>
     <span id="plan" class="plan">Gratuit</span>
     <nav class="sitenav" aria-label="Site">
       <a href="index.html">← Accueil</a>
@@ -253,7 +253,7 @@ h3{font-family:var(--display);font-size:18px;margin:0}
     </div>
     <div class="card plus-card stack" id="plusPitch">
       <div class="row" style="justify-content:space-between;align-items:flex-end">
-        <div><div class="eyebrow">Fin de chantier Plus</div><h2>L'IA vérifie pour vous</h2></div>
+        <div><div class="eyebrow">Pointe ta journée Plus</div><h2>L'IA vérifie pour vous</h2></div>
         <div class="big num" style="font-size:40px">2 €<small style="font-size:16px;color:var(--muted);font-weight:500">/mois</small></div>
       </div>
       <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">
@@ -693,7 +693,7 @@ function reviewPhoto(res){
 }
 $('photoBtn').addEventListener('click',function(){
   if(isPlus()){$('photoIn').click();return}
-  sheet('<div><div class="eyebrow">Fin de chantier Plus</div><h2 id="phT">Vos heures depuis une photo</h2></div>'+
+  sheet('<div><div class="eyebrow">Pointe ta journée Plus</div><h2 id="phT">Vos heures depuis une photo</h2></div>'+
     '<p style="margin:0">Photographiez votre feuille de pointage, votre planning ou votre carnet. L\'IA retrouve les jours et les heures, vous vérifiez, et tout est rempli.</p>'+
     '<div class="row"><button class="btn btn-blue" id="phPlus" type="button">Essayer Plus (aperçu)</button><button class="btn btn-line" data-close type="button">Plus tard</button></div>'+
     '<span class="muted" style="font-size:13px">Aperçu : aucun paiement n\'est demandé.</span>');
@@ -777,7 +777,7 @@ function reportHtml(r){
 }
 function reportText(r){
   return r.title+'\n'+r.name+'\n\n'+r.rows.map(function(x){return x[0]+' : '+x[1]+(x[2]?' '+x[2]:'')+(x[3]?' + '+x[3]+' sup':'')+(x[4]?' ('+x[4]+')':'')}).join('\n')+
-    '\n\n'+r.totals.map(function(x){return x[0]+' : '+x[1]}).join('\n')+'\n\nEnvoyé avec Fin de chantier';
+    '\n\n'+r.totals.map(function(x){return x[0]+' : '+x[1]}).join('\n')+'\n\nEnvoyé avec Pointe ta journée';
 }
 function mailtoLink(b,r){return 'mailto:'+encodeURIComponent(b.to)+'?'+(b.me?'cc='+encodeURIComponent(b.me)+'&':'')+'subject='+encodeURIComponent(r.title)+'&body='+encodeURIComponent(reportText(r))}
 function sendReport(p,auto){

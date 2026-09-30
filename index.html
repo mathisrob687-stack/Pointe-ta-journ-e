@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fin de chantier</title>
+<title>Pointe ta journée</title>
 <meta name="description" content="Vérifiez gratuitement que vos heures et vos heures sup ont bien été payées. Calendrier de paie, congés payés, absences, CDI, CDD, intérim et apprentissage.">
-<meta property="og:title" content="Fin de chantier · Vos heures, on vous les a toutes payées ?">
+<meta property="og:title" content="Pointe ta journée · Vos heures, on vous les a toutes payées ?">
 <meta property="og:description" content="Vérifiez votre fiche de paie en une minute. Première vérification gratuite.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="stylesheet" href="site.css">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Fin de chantier","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"fr","offers":[{"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},{"@type":"Offer","price":"2","priceCurrency":"EUR","name":"Plus, par mois"}]}
+{"@context":"https://schema.org","@type":"WebApplication","name":"Pointe ta journée","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"fr","offers":[{"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},{"@type":"Offer","price":"2","priceCurrency":"EUR","name":"Plus, par mois"}]}
 </script>
 <style>
 .wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
@@ -26,8 +26,9 @@
 .nav nav{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:500}
 .nav nav a{text-decoration:none;color:var(--muted)}
 .nav nav a:hover{color:var(--ink)}
-.nav .btn{min-height:42px;padding:10px 18px;font-size:15px}
+.nav .btn{min-height:42px;padding:10px 18px;font-size:15px;white-space:nowrap}
 @media (max-width:760px){.nav nav a.hide-m{display:none}}
+@media (max-width:400px){.nav .logo{font-size:17px;gap:8px}.nav .btn{padding:10px 14px}}
 
 /* hero */
 .hero{position:relative;overflow:hidden;padding-block:56px 72px}
@@ -182,7 +183,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <header class="nav" id="nav">
   <div class="wrap">
-    <a class="logo" href="#top"><span class="mark" aria-hidden="true"></span>Fin de chantier</a>
+    <a class="logo" href="#top"><span class="mark" aria-hidden="true"></span>Pointe ta journée</a>
     <nav>
       <a class="hide-m" href="#comment">Comment ça marche</a>
       <a class="hide-m" href="#tarifs">Tarifs</a>
@@ -197,7 +198,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div>
         <span class="tag"><i></i>Première vérification gratuite</span>
         <h1><span class="rise">Vos heures,</span> <span class="rise serif" style="animation-delay:.12s">on vous les a</span> <span class="rise" style="animation-delay:.24s">toutes</span> <span class="rise hl" style="animation-delay:.32s">payées&nbsp;?</span></h1>
-        <p class="lead">Notez vos journées, vos heures sup et vos absences. <b>Fin de chantier compare avec votre fiche de paie</b> et vous dit en euros ce qui manque.</p>
+        <p class="lead">Notez vos journées, vos heures sup et vos absences. <b>Pointe ta journée compare avec votre fiche de paie</b> et vous dit en euros ce qui manque.</p>
         <div class="hero-cta">
           <a class="btn btn-blue" href="#verifier">Vérifier ma paie <span class="arrow">→</span></a>
           <a class="btn btn-line" href="app.html">Voir l'app</a>
@@ -266,7 +267,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <div class="lock" id="freeLock" hidden>
           <div class="pad"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
           <div><b style="font-family:var(--display);font-size:22px">Votre vérification gratuite est utilisée</b>
-          <p class="muted" style="margin:6px 0 0">Pour vérifier chaque mois et laisser l'IA lire votre fiche de paie, passez à Fin de chantier Plus.</p></div>
+          <p class="muted" style="margin:6px 0 0">Pour vérifier chaque mois et laisser l'IA lire votre fiche de paie, passez à Pointe ta journée Plus.</p></div>
           <a class="btn btn-blue" href="#tarifs">Passer à Plus · 2 €/mois</a>
           <button class="btn btn-line" type="button" id="showLast">Revoir mon résultat</button>
           <button class="linkbtn" type="button" id="resetFree">Réinitialiser la démo</button>
@@ -437,7 +438,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <span class="logo" style="font-size:16px"><span class="mark" aria-hidden="true" style="width:20px;height:20px;border-radius:5px"></span>Fin de chantier</span>
+    <span class="logo" style="font-size:16px"><span class="mark" aria-hidden="true" style="width:20px;height:20px;border-radius:5px"></span>Pointe ta journée</span>
     <span>Estimations indicatives, ne remplacent pas un conseil juridique.</span>
   </div>
 </footer>

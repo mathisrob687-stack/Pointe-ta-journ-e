@@ -1,4 +1,4 @@
-/* Fin de chantier : bleu de travail + jaune chantier */
+/* Pointe ta journée : bleu de travail + jaune chantier */
 :root{
   --bg:#F5F6F8; --paper:#FFFFFF; --paper2:#EEF0F4; --ink:#0E1216; --muted:#5A6472; --line:#E1E4EA;
   --blue:#1D3FA6; --blue-ink:#FFFFFF; --blue-soft:rgba(29,63,166,.08);
@@ -41,7 +41,7 @@ a{color:inherit}
 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
 /* logo */
-.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em}
+.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;white-space:nowrap}
 .logo .mark{width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 5px,var(--ink) 5px 10px);flex:none}
 
 /* boutons */

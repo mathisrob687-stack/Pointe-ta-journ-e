@@ -1,4 +1,4 @@
-/* Fin de chantier : calculs de paie partagés par la page d'accueil et l'app.
+/* Pointe ta journée : calculs de paie partagés par la page d'accueil et l'app.
    Ce sont des estimations. Les taux réels dépendent de la convention collective. */
 (function (global) {
   'use strict';
