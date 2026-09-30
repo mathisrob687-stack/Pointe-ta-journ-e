@@ -28,7 +28,7 @@ function buildHtml(r) {
 <h2 style="margin:0 0 16px;font-size:20px">${esc(r.title)}</h2>
 ${r.rows.length ? `<table style="border-collapse:collapse;width:100%;margin-bottom:18px"><tr>${head}</tr>${rows}</table>` : ''}
 <table style="border-collapse:collapse;width:100%;max-width:360px">${tot}</table>
-<p style="margin:20px 0 0;font-size:12px;color:#777">Relevé tenu par le salarié et envoyé avec Pointe ta journée (fin-de-chantier.vercel.app).</p>
+<p style="margin:20px 0 0;font-size:12px;color:#777">Relevé tenu par le salarié et envoyé avec Pointe ta journée (pointetajournee.vercel.app).</p>
 </div>`;
 }
 function buildText(r) {

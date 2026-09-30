@@ -58,7 +58,7 @@ Chaque photo coûte quelques centimes. La photo n'est pas gardée : elle part à
 5. À chaque modification poussée sur GitHub, Vercel remet le site à jour tout seul.
 
 Pour un vrai nom de domaine (ex. `pointetajournee.fr`, environ 10 €/an) : Vercel → votre projet → **Settings → Domains → Add**.
-Pensez alors à remplacer `fin-de-chantier.vercel.app` dans `index.html` (balise `canonical`), `robots.txt` et `sitemap.xml`.
+Pensez alors à remplacer `pointetajournee.vercel.app` dans `index.html` (balise `canonical`), `robots.txt` et `sitemap.xml`.
 
 ### 3. Apparaître sur Google
 
