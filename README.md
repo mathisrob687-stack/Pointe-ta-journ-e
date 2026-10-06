@@ -44,7 +44,7 @@ Chaque photo coûte quelques centimes. La photo n'est pas gardée : elle part à
 ### 1. Créer le dépôt GitHub
 
 1. Allez sur https://github.com/new
-2. Nom du dépôt : `fin-de-chantier`, laissez-le **Private** si vous préférez, puis cliquez sur **Create repository**.
+2. Nom du dépôt : `pointe-ta-journee`, laissez-le **Private** si vous préférez, puis cliquez sur **Create repository**.
 3. Sur la page du dépôt vide, cliquez sur **uploading an existing file** et glissez tous les fichiers de ce dossier.
    (Ou, si vous avez connecté GitHub à Claude, Claude peut pousser les fichiers pour vous.)
 4. Cliquez sur **Commit changes**.
@@ -52,9 +52,9 @@ Chaque photo coûte quelques centimes. La photo n'est pas gardée : elle part à
 ### 2. Mettre en ligne avec Vercel (gratuit)
 
 1. Allez sur https://vercel.com et connectez-vous **avec votre compte GitHub**.
-2. Cliquez sur **Add New… → Project**, puis **Import** à côté de `fin-de-chantier`.
+2. Cliquez sur **Add New… → Project**, puis **Import** à côté de `pointe-ta-journee`.
 3. Framework Preset : **Other**. Ne changez rien d'autre, cliquez sur **Deploy**.
-4. Au bout de quelques secondes, le site est en ligne sur une adresse du type `fin-de-chantier.vercel.app`.
+4. Au bout de quelques secondes, le site est en ligne sur une adresse du type `pointe-ta-journee.vercel.app`.
 5. À chaque modification poussée sur GitHub, Vercel remet le site à jour tout seul.
 
 Pour un vrai nom de domaine (ex. `pointetajournee.fr`, environ 10 €/an) : Vercel → votre projet → **Settings → Domains → Add**.
