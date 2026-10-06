@@ -2,6 +2,8 @@
 
 Site pour vérifier que ses heures (et ses heures sup) ont bien été payées.
 
+En ligne : https://pointetajournee.vercel.app
+
 - `index.html` : page d'accueil, avec la vérification gratuite (une seule fois) et le calcul des congés payés.
 - `app.html` : l'application (calendrier du mois, heures sup, congés, absences, paie, contrat).
 - `calc.js` : tous les calculs (cotisations selon le contrat, heures sup, précarité, congés payés).
