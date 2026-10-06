@@ -3,9 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mon mois · Pointe ta journée</title>
+<title>Aujourd'hui · Pointe ta journée</title>
 <meta name="description" content="Notez vos heures, heures sup, congés et absences. Voyez ce que chaque jour vous rapporte.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#1D3FA6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pointe ta journée">
+<script>try{var t=JSON.parse(localStorage.getItem('fdc-theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap">
@@ -134,13 +139,173 @@ h3{font-family:var(--display);font-size:18px;margin:0}
 .prow .hh label{display:flex;flex-direction:column;font-size:11px;color:var(--muted);font-weight:600;gap:2px}
 .prow .hh input{width:62px;padding:8px 6px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-weight:700;text-align:center;background:var(--paper)}
 .pill.warn{background:var(--hl);color:var(--ink)}
+
+/* v3 : écrans Aujourd'hui, Historique, Résumé, Réglages */
+.ptitle{font-family:var(--display);font-weight:800;font-size:40px;letter-spacing:-.035em;line-height:1.05;margin:4px 2px 0}
+.glabel{font-size:15px;font-weight:700;color:var(--muted);margin:6px 4px -6px}
+.ico{width:40px;height:40px;border-radius:50%;background:var(--paper2);display:grid;place-items:center;flex:none;color:var(--ink)}
+.ico svg,.chev svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chev{color:var(--muted);display:grid;place-items:center;flex:none}
+
+/* Aujourd'hui */
+.dayhead{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;text-align:center;gap:8px}
+.dayhead h2{font-size:22px;font-weight:700}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;background:var(--paper2);color:var(--muted)}
+.status.ok{background:var(--good-soft);color:var(--good)}
+.status.run{background:color-mix(in srgb,var(--yellow) 25%,var(--paper));color:var(--ink)}
+.totalbox{display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 0 2px}
+.bigtotal{font-family:var(--display);font-weight:800;font-size:72px;letter-spacing:-.045em;line-height:1;text-align:center;width:100%;max-width:320px;border:0;border-bottom:2px dashed transparent;background:transparent;color:var(--ink);padding:0}
+.bigtotal:focus{outline:none;border-bottom-color:var(--blue)}
+.bigtype{font-family:var(--display);font-weight:800;font-size:52px;letter-spacing:-.04em;line-height:1.1}
+.dval{font-weight:700;color:var(--blue);font-size:17px}
+.tipwrap{position:relative}
+.tcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tcard{position:relative;display:flex;flex-direction:column;gap:0;border-radius:20px;padding:14px 16px 12px;border:1.5px solid;cursor:pointer;min-width:0}
+.tcard.start{background:var(--blue-soft);border-color:color-mix(in srgb,var(--blue) 35%,transparent);color:var(--blue)}
+.tcard.end{background:color-mix(in srgb,var(--yellow) 14%,var(--paper));border-color:color-mix(in srgb,var(--yellow) 80%,transparent);color:var(--ink)}
+.tcard .k{font-weight:700;font-size:16px}
+.tcard .tv{font-family:var(--display);font-weight:800;font-size:42px;letter-spacing:-.035em;line-height:1.15;margin:2px 0}
+.tcard input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;cursor:pointer;-webkit-appearance:none;appearance:none;font-size:16px}
+.tcard input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:auto;height:auto;cursor:pointer}
+.tcard:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
+.tcard small{font-weight:600;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.tcard.empty .tv{color:color-mix(in srgb,currentColor 35%,transparent)}
+@media (max-width:370px){.tcard .tv{font-size:34px}.bigtotal{font-size:60px}}
+.minis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--paper);border-radius:18px;padding:10px 10px 10px 12px;min-width:0;text-align:left;width:100%;color:var(--ink)}
+.mini .tx{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.25}
+.mini .tx b{font-size:15px;font-weight:600}
+.mini .tx span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .tx .val{font-family:var(--display);font-weight:800;font-size:20px;color:var(--ink)}
+.mini .pm{display:flex;flex-direction:column;gap:4px;flex:none}
+.mini .pm button{width:34px;height:28px;border-radius:9px;border:1.5px solid var(--line);background:var(--paper2);font-size:18px;line-height:1;padding:0}
+.mini .linkbtn{background:none;border:0;padding:0;font-size:12px;color:var(--blue);text-decoration:underline;text-align:left}
+.mini.step{flex-direction:column;align-items:stretch;gap:4px;padding:10px 12px}
+.mini.step .hd{display:flex;align-items:center;gap:8px;font-size:15px}
+.mini.step .hd b{font-weight:600}
+.mini.step .hd .ico{width:30px;height:30px}
+.mini.step .hd .ico svg{width:16px;height:16px}
+.mini.step .bd{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.mini.step .val{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
+.mini.step .pm{display:flex;flex-direction:row;gap:6px}
+.mini.step .pm button{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper2);font-size:20px;line-height:1;padding:0}
+.mini.step .sub{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .linkbtn{background:none;border:0;padding:0;font-size:12.5px;color:var(--blue);text-decoration:underline;text-align:left}
+.missionbtn{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:var(--paper);border-radius:18px;padding:12px 14px;width:100%;text-align:left}
+.missionbtn .tx{flex:1;display:flex;flex-direction:column;line-height:1.3}
+.missionbtn .tx span{font-size:13px;color:var(--muted)}
+.missionbtn .tx b{font-size:18px;color:var(--blue)}
+.tip{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);z-index:5;background:var(--ink);color:var(--bg);font-weight:600;font-size:15px;text-align:center;border-radius:14px;padding:10px 14px;width:max-content;max-width:min(92vw,330px);box-shadow:var(--shadow);animation:fade .2s}
+.tip::after{content:"";position:absolute;top:100%;left:50%;margin-left:-8px;border:8px solid transparent;border-top-color:var(--ink)}
+.punch{display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* Historique */
+.hrow{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;color:var(--ink)}
+.hrow:last-child{border-bottom:0}
+.dbox{display:flex;flex-direction:column;align-items:center;line-height:1.05}
+.dbox small{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+.dbox b{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.02em}
+.hrow .mid{display:flex;flex-direction:column;min-width:0;font-size:13px;color:var(--muted);line-height:1.35}
+.hrow .mid b{font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow .mid .sup{color:var(--blue);font-weight:600}
+.hrow .r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.hrow .r b{font-family:var(--display);font-size:18px;font-weight:800}
+.hrow .r span{font-size:13px;color:var(--good);font-weight:600}
+.hrow .r span.neg{color:var(--bad)}
+.empty{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 8px}
+.empty svg{width:44px;height:44px;stroke:var(--muted);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.empty h3{font-size:20px}
+.empty p{margin:0;color:var(--muted);max-width:320px}
+.selectrow{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--paper);border-radius:16px;padding:0 14px}
+.selectrow svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.selectrow select{flex:1;border:0;background:transparent;padding:13px 0;font-size:16px;font-weight:600;min-width:0}
+.selectrow select:focus{outline:none}
+
+/* Résumé */
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--paper2);border-radius:16px;padding:4px}
+.seg3 button{border:0;background:none;border-radius:12px;padding:11px 4px;font-size:16px;font-weight:600}
+.seg3 button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.vbars{display:flex;align-items:flex-end;gap:5px;height:130px;padding-top:6px}
+.vb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0;font-size:11px;color:var(--muted)}
+.vb i{display:block;width:100%;max-width:34px;background:var(--blue);border-radius:6px 6px 2px 2px;min-height:2px}
+.vb i.z{background:var(--line)}
+.vb em{font-style:normal;font-size:10.5px;color:var(--ink);font-weight:600;white-space:nowrap}
+
+/* Réglages */
+.plusbanner{display:flex;align-items:center;gap:14px;background:var(--ink);color:var(--bg);border:0;border-radius:22px;padding:16px;text-align:left;width:100%}
+.plusbanner .tx{flex:1;display:flex;flex-direction:column;line-height:1.3}
+.plusbanner .tx b{font-family:var(--display);font-size:20px;font-weight:800}
+.plusbanner .tx span{font-size:14px;opacity:.75}
+.spark{width:50px;height:50px;border-radius:50%;background:var(--yellow);color:var(--yellow-ink);display:grid;place-items:center;flex:none}
+.spark svg{width:26px;height:26px;fill:currentColor}
+.group{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.ri{display:flex;align-items:center;gap:12px;padding:13px 14px;border:0;border-bottom:1px solid var(--line);background:none;width:100%;text-align:left;color:var(--ink)}
+.ri:last-child{border-bottom:0}
+.ri .tx{flex:1;display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.ri .tx b{font-size:16px;font-weight:700}
+.ri .tx span{font-size:13px;color:var(--muted)}
+.ri .rv{font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap}
+.badge{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;background:var(--blue);color:var(--blue-ink);white-space:nowrap}
+.opt{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);width:100%;text-align:left}
+.opt[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft)}
+.opt .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
+.opt[aria-pressed="true"] .dot{border-color:var(--blue)}
+.opt[aria-pressed="true"] .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--blue)}
+.opt .tx{flex:1;display:flex;flex-direction:column;min-width:0}
+.opt .tx span{font-size:13px;color:var(--muted)}
+.opt .del{border:0;background:none;color:var(--bad);font-size:14px;font-weight:600;padding:4px}
+.daychips{display:flex;gap:6px}
+.daychips .chip{padding:9px 0;width:40px;text-align:center}
+
+/* offre Plus */
+.feat{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.feat:last-child{border-bottom:0}
+.feat .tx{display:flex;flex-direction:column;line-height:1.3}
+.feat .tx span{font-size:14px;color:var(--muted)}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.planc{position:relative;display:flex;flex-direction:column;gap:4px;border:2px solid var(--line);border-radius:18px;padding:14px;text-align:left;background:var(--paper);color:var(--ink)}
+.planc[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft)}
+.planc .amount{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.planc .amount small{font-size:15px;font-weight:600}
+.planc .gift{font-size:13px;font-weight:700;color:var(--blue)}
+.planc .muted{font-size:13px}
+.planc .badge{position:absolute;top:-11px;right:10px}
+
+/* présentation */
+.onb{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto}
+.onb-in{max-width:520px;margin:0 auto;padding:calc(22px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;min-height:100%}
+.onb h1{font-family:var(--display);font-weight:800;font-size:52px;letter-spacing:-.045em;line-height:1;margin:6px 0 0}
+.onb .lead{font-size:19px;color:var(--muted);margin:0}
+.illu{background:var(--paper);border:1px solid var(--line);border-radius:26px;padding:20px;display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:stretch}
+.ticket{border-radius:18px;background:var(--ink);color:var(--bg);padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;position:relative;overflow:hidden}
+.ticket::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 6px,var(--ink) 6px 12px)}
+.ticket .t{margin-top:8px;font-size:12px;opacity:.7;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ticket b{font-family:var(--display);font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.ticket .e{display:inline-block;background:var(--yellow);color:var(--yellow-ink);font-weight:800;border-radius:999px;padding:3px 10px;font-size:14px;align-self:flex-start}
+.minical{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;align-content:center}
+.minical i{aspect-ratio:1;border-radius:6px;background:var(--paper2)}
+.minical i.w{background:var(--blue-soft);box-shadow:inset 0 -10px 0 color-mix(in srgb,var(--blue) 30%,transparent)}
+.minical i.s{background:var(--blue)}
+.minical i.c{background:var(--hl)}
+.onb .feat .ico{background:var(--blue-soft);color:var(--blue)}
+.onb .grow{flex:1}
+
+/* impression (export PDF) */
+#printArea{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;font-size:12px}
+  #printArea table{width:100%;border-collapse:collapse}
+  #printArea th,#printArea td{border-bottom:1px solid #bbb;padding:4px 6px;text-align:left}
+}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>Pointe ta journée</a>
-    <span id="plan" class="plan">Gratuit</span>
+    <button id="plan" class="plan" type="button">Gratuit</button>
     <nav class="sitenav" aria-label="Site">
       <a href="index.html">← Accueil</a>
       <a href="index.html#comment">Comment ça marche</a>
@@ -153,8 +318,63 @@ h3{font-family:var(--display);font-size:18px;margin:0}
     <button class="linkbtn" id="clearSample" type="button">Commencer avec mes heures</button>
   </div>
 
-  <!-- MOIS -->
-  <section class="v" id="view-mois">
+  <!-- AUJOURD'HUI -->
+  <section class="v" id="view-today">
+    <div id="remBanner" class="banner" hidden><span>⏰ Pensez à noter votre journée.</span></div>
+    <div class="dayhead">
+      <button class="navbtn" id="dPrev" type="button" aria-label="Jour précédent">‹</button>
+      <div><div class="eyebrow" id="dRel">Aujourd'hui</div><h2 id="dTitle">—</h2></div>
+      <button class="navbtn" id="dNext" type="button" aria-label="Jour suivant">›</button>
+    </div>
+    <div class="totalbox">
+      <input id="dTotal" class="bigtotal num" type="text" inputmode="text" autocomplete="off" aria-label="Total de la journée, ex. 7h30">
+      <div id="dTypeBig" class="bigtype" hidden></div>
+      <div class="dval num" id="dVal"></div>
+      <span class="status" id="dStatus">Pas encore enregistrée</span>
+    </div>
+    <div class="seg" id="dType" role="group" aria-label="Type de journée"></div>
+    <div id="dWork" class="stack">
+      <div class="tipwrap" id="tipTimes">
+        <div class="tcards">
+          <label class="tcard start" id="cStart"><span class="k">Début</span><span class="tv num" id="dStartTxt">--h--</span><input type="time" id="dStart" step="900" aria-label="Heure de début"><small>Modifier</small></label>
+          <label class="tcard end" id="cEnd"><span class="k">Fin</span><span class="tv num" id="dEndTxt">--h--</span><input type="time" id="dEnd" step="900" aria-label="Heure de fin"><small>Modifier</small></label>
+        </div>
+      </div>
+      <button class="btn btn-line block punch" id="punch" type="button" hidden></button>
+      <div class="minis">
+        <div class="mini step">
+          <span class="hd"><span class="ico"><svg viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg></span><b>Pause</b></span>
+          <span class="bd"><span class="val num" id="dPause">00h00</span><span class="pm"><button type="button" data-pz="-0.25" aria-label="Pause moins un quart d'heure">−</button><button type="button" data-pz="0.25" aria-label="Pause plus un quart d'heure">+</button></span></span>
+          <span class="sub">déduite du total</span>
+        </div>
+        <div class="mini step">
+          <span class="hd"><span class="ico" style="color:var(--blue)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><b>Heures sup.</b></span>
+          <span class="bd"><span class="val num" id="dSup" style="color:var(--blue)">00h00</span><span class="pm"><button type="button" data-sp="-0.25" aria-label="Heures sup moins un quart d'heure">−</button><button type="button" data-sp="0.25" aria-label="Heures sup plus un quart d'heure">+</button></span></span>
+          <span class="sub" id="dSupHint"></span>
+        </div>
+        <button class="mini" id="noteBtn" type="button">
+          <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg></span>
+          <span class="tx"><b>Note</b><span id="dNote">Ajouter</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
+        <button class="mini" id="nightBtn" type="button">
+          <span class="ico"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span>
+          <span class="tx"><b>Heures de nuit</b><span id="dNight">Désactivé</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
+      </div>
+      <button class="missionbtn" id="missionBtn" type="button">
+        <span class="tx"><span>Mission ou chantier</span><b id="dMission">+ Ajouter une mission</b><span id="dMissionHint">(facultatif)</span></span>
+        <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+      <label class="checkrow"><input type="checkbox" id="dPanier"><span><b>Panier repas</b><br><span class="muted" style="font-size:13px" id="dPanierAmt"></span></span></label>
+    </div>
+    <p class="muted" id="dInfo" style="margin:0;font-size:14px" hidden></p>
+    <button class="btn btn-blue block" id="dSave" type="button">Enregistrer la journée</button>
+    <button class="btn btn-danger" id="dDel" type="button" hidden>Effacer ce jour</button>
+  </section>
+
+  <!-- HISTORIQUE -->
+  <section class="v" id="view-hist" hidden>
+    <h1 class="ptitle">Historique</h1>
     <div class="card stack">
       <div class="eyebrow" id="sumLabel">Net estimé du mois</div>
       <div class="big num" id="sumNet">0 €</div>
@@ -165,13 +385,12 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <div><b class="num" id="sumAbs">0 j</b><span>absences</span></div>
       </div>
     </div>
-    <button class="btn btn-blue block" id="todayBtn" type="button">＋ Noter ma journée d'aujourd'hui</button>
     <button class="btn btn-line block photobtn" id="photoBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Remplir mes heures avec une photo<span class="plan on">Plus</span></button>
     <input type="file" id="photoIn" accept="image/*" hidden>
     <div class="card stack">
       <div class="calhead">
         <button class="navbtn" id="prevM" type="button" aria-label="Mois précédent">‹</button>
-        <h2 id="calTitle">septembre 2026</h2>
+        <h2 id="calTitle">—</h2>
         <button class="navbtn" id="nextM" type="button" aria-label="Mois suivant">›</button>
       </div>
       <div class="cal" id="cal"></div>
@@ -181,34 +400,33 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <span style="--c:var(--hl)">Congé payé</span>
         <span style="--c:var(--bad-soft)">Maladie / absence</span>
       </div>
-      <p class="muted" style="margin:0;font-size:14px">Touchez un jour pour noter vos heures, un congé ou une absence.</p>
+      <p class="muted" style="margin:0;font-size:14px">Touchez un jour pour le noter ou le modifier.</p>
     </div>
+    <label class="selectrow" id="hMissionRow" hidden><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg><select id="hMission" aria-label="Filtrer par mission"></select></label>
+    <div class="card"><h2 style="margin-bottom:4px">Jours enregistrés</h2><div class="list" id="hList"></div></div>
   </section>
 
-  <!-- HEURES SUP -->
-  <section class="v" id="view-sup" hidden>
+  <!-- RÉSUMÉ -->
+  <section class="v" id="view-resume" hidden>
+    <h1 class="ptitle">Résumé</h1>
+    <div class="seg3" id="rMode"><button type="button" data-m="week">Semaine</button><button type="button" data-m="month">Mois</button><button type="button" data-m="year">Année</button></div>
+    <div class="calhead">
+      <button class="navbtn" id="rPrev" type="button" aria-label="Période précédente">‹</button>
+      <h2 id="rTitle" style="font-size:20px">—</h2>
+      <button class="navbtn" id="rNext" type="button" aria-label="Période suivante">›</button>
+    </div>
+    <label class="selectrow" id="rMissionRow" hidden><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg><select id="rMission" aria-label="Filtrer par mission"></select></label>
+    <div class="card stack" id="rCard"></div>
+    <button class="btn btn-line block photobtn" id="exportBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Exporter en PDF ou Excel<span class="plan on">Plus</span></button>
     <div class="card stack">
-      <div class="eyebrow" id="supLabel">septembre 2026</div>
       <div class="two">
-        <div><div class="big num" id="supTotal" style="font-size:44px">0 h</div><div class="muted">heures sup faites</div></div>
-        <div><div class="big num" id="supEur" style="font-size:44px">0 €</div><div class="muted">en plus (brut)</div></div>
+        <div><div class="big num" id="supTotal" style="font-size:40px">0 h</div><div class="muted">heures sup</div></div>
+        <div><div class="big num" id="supEur" style="font-size:40px">0 €</div><div class="muted">en plus (brut)</div></div>
       </div>
-      <div class="rule" id="supRule">Au-delà de <b>35 h</b> par semaine, les <b>8 premières</b> heures sup sont payées <b>+25 %</b>, les suivantes <b>+50 %</b>.</div>
+      <div class="rule" id="supRule"></div>
+      <div class="list" id="supList"></div>
     </div>
-    <div class="card stack">
-      <h2>Ajouter des heures sup</h2>
-      <div class="field"><label for="supDate">Jour</label><input type="date" id="supDate"></div>
-      <div class="stepper">
-        <div class="txt"><b>Heures sup</b><span>en plus de la journée</span></div>
-        <div class="ctl"><button type="button" data-sup="-0.25" aria-label="Moins un quart d'heure">−</button><input id="supAdd" class="num hin" type="text" inputmode="text" autocomplete="off" value="01h00" aria-label="Heures sup, ex. 01h30"><button type="button" data-sup="0.25" aria-label="Plus un quart d'heure">+</button></div>
-      </div>
-      <button class="btn btn-blue block" id="supSave" type="button">Ajouter</button>
-    </div>
-    <div class="card"><h2 style="margin-bottom:4px">Détail du mois</h2><div class="list" id="supList"></div></div>
-  </section>
-
-  <!-- CONGÉS -->
-  <section class="v" id="view-conges" hidden>
+    <h2 style="margin:8px 2px -4px">Mes congés</h2>
     <div class="card stack">
       <div class="eyebrow" id="cpPeriod">Période de congés</div>
       <div class="two">
@@ -217,23 +435,29 @@ h3{font-family:var(--display);font-size:18px;margin:0}
       </div>
       <div class="meter" aria-hidden="true"><i id="cpBarTaken" style="background:var(--yellow)"></i><i id="cpBarLeft" style="background:var(--blue)"></i></div>
       <div class="legend"><span style="--c:var(--yellow)" id="cpTakenTxt">0 posés</span><span style="--c:var(--blue)" id="cpLeftTxt">0 restants</span><span id="cpAcqTxt">sur 0 gagnés</span></div>
-      <div class="rule" id="cpRule">Vous gagnez <b>2,5 jours</b> par mois travaillé, du 1er juin au 31 mai, soit 30 jours ouvrables par an.</div>
+      <div class="rule" id="cpRule"></div>
     </div>
     <div class="card stack">
-      <h2>Poser des congés</h2>
-      <p class="muted" style="margin:0">Choisissez un jour dans le calendrier et sélectionnez « Congé ». Les jours posés apparaissent ici.</p>
+      <h3>Congés posés</h3>
+      <p class="muted" style="margin:0;font-size:14px">Pour poser un congé, ouvrez le jour dans Aujourd'hui ou l'Historique et choisissez « Congé ».</p>
       <div class="list" id="cpList"></div>
       <div class="field"><label for="cpBefore">Jours déjà posés avant d'utiliser l'app</label><input type="number" id="cpBefore" min="0" step="1" inputmode="numeric"></div>
     </div>
     <div class="card stack">
       <h3>Combien vaut un jour de congé&nbsp;?</h3>
       <div class="lines" id="cpValue"></div>
-      <p class="muted" style="margin:0;font-size:14px" id="cpWho">On garde la règle la plus avantageuse pour vous.</p>
+      <p class="muted" style="margin:0;font-size:14px" id="cpWho"></p>
     </div>
   </section>
 
   <!-- PAIE -->
   <section class="v" id="view-paie" hidden>
+    <h1 class="ptitle">Ma paie</h1>
+    <div class="calhead">
+      <button class="navbtn" id="pPrev" type="button" aria-label="Mois précédent">‹</button>
+      <h2 id="pTitle" style="font-size:20px;text-transform:capitalize">—</h2>
+      <button class="navbtn" id="pNext" type="button" aria-label="Mois suivant">›</button>
+    </div>
     <div class="card stack">
       <div class="eyebrow" id="payLabel">Paie estimée</div>
       <div class="lines" id="payLines"></div>
@@ -260,10 +484,9 @@ h3{font-family:var(--display);font-size:18px;margin:0}
         <li>Vérifications illimitées chaque mois</li>
         <li>Photo de la fiche de paie lue par l'IA</li>
         <li>Heures remplies depuis une photo</li>
-        <li>Prévision de la paie du mois prochain</li>
+        <li>Plusieurs missions et exports PDF / Excel</li>
       </ul>
-      <button class="btn btn-blue block" id="subBtn" type="button">Essayer Plus (aperçu)</button>
-      <span class="muted" style="font-size:13px">Aperçu : aucun paiement n'est demandé.</span>
+      <button class="btn btn-blue block" id="subBtn" type="button">Voir les offres · 7 jours gratuits</button>
     </div>
     <div id="plusArea" class="stack" hidden>
       <div class="card stack">
@@ -298,10 +521,17 @@ h3{font-family:var(--display);font-size:18px;margin:0}
     </div>
   </section>
 
-  <!-- CONTRAT -->
-  <section class="v" id="view-contrat" hidden>
+  <!-- RÉGLAGES -->
+  <section class="v" id="view-reglages" hidden>
+    <h1 class="ptitle">Réglages</h1>
+    <button class="plusbanner" id="plusBanner" type="button">
+      <span class="spark"><svg viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg></span>
+      <span class="tx"><b id="plusBannerT">Pointe ta journée Plus</b><span id="plusBannerS">IA fiche de paie · Photo · Missions · Exports</span></span>
+      <span class="chev" style="color:inherit"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+    </button>
+
+    <div class="glabel">Mon contrat</div>
     <div class="card stack">
-      <h2>Mon contrat</h2>
       <p class="muted" style="margin:0">Ces informations servent à calculer vos cotisations et vos indemnités.</p>
       <div class="field"><span class="lbl">Type de contrat</span>
         <div class="chips" data-group="contrat">
@@ -321,9 +551,27 @@ h3{font-family:var(--display);font-size:18px;margin:0}
       <div class="field"><label for="setStart">Date d'embauche</label><input id="setStart" type="date"><span class="hint">Pour calculer vos congés payés.</span></div>
       <button class="btn btn-blue block" id="setSave" type="button">Enregistrer</button>
     </div>
+
+    <div class="glabel">Préférences</div>
+    <div class="group">
+      <button class="ri" type="button" data-open="missions"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg></span><span class="tx"><b>Mes missions</b><span>Chantiers, clients ou agences</span></span><span class="rv num" id="rvMissions">0</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="majo"><span class="ico"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span><span class="tx"><b>Nuit, dimanche et jours fériés</b><span>Vos majorations</span></span><span class="rv" id="rvMajo">—</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="rappel"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx"><b>Rappel quotidien</b><span>Pensez à noter vos heures</span></span><span class="rv" id="rvRappel">Non</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="theme"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v16" /><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></span><span class="tx"><b>Thème</b><span>Apparence</span></span><span class="rv" id="rvTheme">Auto</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="backup"><span class="ico"><svg viewBox="0 0 24 24"><path d="M7 18a5 5 0 0 1-.6-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-1 9"/><path d="M12 12v8M9 15l3-3 3 3"/></svg></span><span class="tx"><b>Sauvegarde et restauration</b><span>Gardez une copie de vos heures</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="install"><span class="ico"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span><span class="tx"><b>Installer sur mon téléphone</b><span>Comme une vraie appli, sur l'écran d'accueil</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    </div>
+
+    <div class="glabel">Autre</div>
+    <div class="group">
+      <button class="ri" type="button" data-open="share"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 13v7h14v-7"/></svg></span><span class="tx"><b>Partager l'appli</b><span>À un collègue qui doute de sa fiche</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="onb"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><span class="tx"><b>Revoir la présentation</b><span>Les écrans du début</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button class="ri" type="button" data-open="about"><span class="ico" style="background:none"><span class="logo"><span class="mark" aria-hidden="true"></span></span></span><span class="tx"><b>À propos</b><span>Version 3.0 · Pointe ta journée</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    </div>
+
     <div class="card stack">
       <h3>Mes données</h3>
-      <p class="muted" style="margin:0">Vos heures restent sur ce téléphone.</p>
+      <p class="muted" style="margin:0">Vos heures restent sur ce téléphone, sans compte.</p>
       <button class="btn btn-danger" id="wipe" type="button">Tout effacer</button>
       <div id="wipeConfirm" class="row" hidden>
         <span style="flex-basis:100%;font-size:14px">Effacer toutes vos heures ? Elles ne pourront pas être récupérées.</span>
@@ -336,27 +584,68 @@ h3{font-family:var(--display);font-size:18px;margin:0}
 
 <nav class="tabs" aria-label="Menu">
   <div class="in" role="tablist">
-    <button class="tab" role="tab" data-view="mois" aria-selected="true" type="button"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mon mois</button>
-    <button class="tab" role="tab" data-view="sup" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>Heures sup</button>
-    <button class="tab" role="tab" data-view="conges" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Congés</button>
+    <button class="tab" role="tab" data-view="today" aria-selected="true" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Aujourd'hui</button>
+    <button class="tab" role="tab" data-view="hist" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Historique</button>
+    <button class="tab" role="tab" data-view="resume" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>Résumé</button>
     <button class="tab" role="tab" data-view="paie" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5M9 12h7M9 16h7"/></svg>Ma paie</button>
-    <button class="tab" role="tab" data-view="contrat" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Contrat</button>
+    <button class="tab" role="tab" data-view="reglages" aria-selected="false" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages</button>
   </div>
 </nav>
+
+<!-- PRÉSENTATION (premier lancement) -->
+<div class="onb" id="onb" hidden>
+  <div class="onb-in" id="onb1">
+    <span class="logo"><span class="mark" aria-hidden="true"></span>Pointe ta journée</span>
+    <h1>Bienvenue</h1>
+    <p class="lead">Notez votre journée en trois touches et voyez tout de suite ce qu'elle vous rapporte.</p>
+    <div class="illu" aria-hidden="true">
+      <div class="ticket"><span class="t">Aujourd'hui</span><b class="num">07h30</b><span class="e num">≈ 92 € net</span></div>
+      <div class="minical"><i class="w"></i><i class="w"></i><i class="s"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="s"></i><i class="w"></i><i class="c"></i><i class="c"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="s"></i><i></i></div>
+    </div>
+    <div class="card" style="padding:4px 16px">
+      <div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tx"><b>Début, fin, pause</b><span>Votre journée notée en quelques secondes.</span></span></div>
+      <div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><circle cx="12" cy="13" r="2.5"/><path d="M4 10h2M18 16h2"/></svg></span><span class="tx"><b>Ce que chaque jour rapporte</b><span>En net, heures sup, nuit et paniers compris.</span></span></div>
+      <div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 2h9l4 4v16H6z"/><path d="M9 14l2 2 4-4"/></svg></span><span class="tx"><b>Votre fiche de paie vérifiée</b><span>On vous dit en euros s'il manque quelque chose.</span></span></div>
+    </div>
+    <div class="grow"></div>
+    <button class="btn btn-blue block" id="onbGo" type="button">Commencer <span class="arrow">→</span></button>
+  </div>
+  <div class="onb-in" id="onb2" hidden>
+    <button class="navbtn" id="onbBack" type="button" aria-label="Retour">‹</button>
+    <h1 style="font-size:40px">Votre contrat en 20&nbsp;secondes</h1>
+    <p class="lead">Pour calculer ce que vous gagnez vraiment. Tout se change ensuite dans Réglages.</p>
+    <div class="field"><span class="lbl">Type de contrat</span>
+      <div class="chips" data-onb="contrat"><button type="button" class="chip" data-v="cdi">CDI</button><button type="button" class="chip" data-v="cdd">CDD</button><button type="button" class="chip" data-v="interim">Intérim</button><button type="button" class="chip" data-v="apprenti">Apprentissage</button></div></div>
+    <div class="two">
+      <div class="field"><label for="onbRate">Taux horaire brut</label><div class="unit"><input id="onbRate" type="number" inputmode="decimal" step="0.01" min="0"><span>€</span></div></div>
+      <div class="field"><label for="onbWeekly">Heures / semaine</label><div class="unit"><input id="onbWeekly" type="number" inputmode="decimal" step="0.5" min="0"><span>h</span></div></div>
+    </div>
+    <label class="checkrow"><input type="checkbox" id="onbBtp"><span><b>Je travaille dans le BTP</b><br><span class="muted" style="font-size:13px">Congés payés par la caisse CIBTP.</span></span></label>
+    <p class="muted" style="margin:0;font-size:14px">Le taux horaire est écrit sur votre fiche de paie, à la ligne « Salaire de base ». Pas sous la main ? Gardez le SMIC proposé.</p>
+    <div class="grow"></div>
+    <button class="btn btn-blue block" id="onbDone" type="button">C'est parti</button>
+    <button class="btn btn-line block" id="onbSample" type="button">Découvrir avec des heures d'exemple</button>
+  </div>
+</div>
+
 <div id="sheetHost"></div>
 <div id="toast" class="toast" hidden></div>
-
+<div id="printArea"></div>
 <script src="calc.js"></script>
 <script>
 (function(){
 'use strict';
 var F=window.FDC, $=function(id){return document.getElementById(id)};
-var KEY='fdc-app-v2', FREE_KEY='fdc-free-check';
+var KEY='fdc-app-v2', FREE_KEY='fdc-free-check', ONB_KEY='fdc-onb', TIPS_KEY='fdc-tips', THEME_KEY='fdc-theme', REM_KEY='fdc-remind', OFFER_KEY='fdc-offer';
 var MONTHS=F.MONTHS, DOW=['L','M','M','J','V','S','D'], DOWL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+var MSHORT=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'], DSHORT=['dim','lun','mar','mer','jeu','ven','sam'];
 var TYPES={work:'Travaillé',cp:'Congé',maladie:'Maladie',absent:'Absent'};
 var today=new Date(); today.setHours(12,0,0,0); var TODAY=F.iso(today);
+var VIEWS=['today','hist','resume','paie','reglages'];
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pad(n){return (n<10?'0':'')+n}
+function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
 
 function sample(){
   var days={}, y=today.getFullYear(), m=today.getMonth();
@@ -364,8 +653,8 @@ function sample(){
   for(var d=1;d<=31;d++){
     var dt=new Date(y,m,d,12); if(dt.getMonth()!==m||dt>today) break;
     var k=F.iso(dt), wd=dt.getDay(); if(F.HOLI[k]) continue;
-    if(wd>=1&&wd<=5) days[k]={t:'work',n:7,s:sup[d]||0,p:true,note:''};
-    if(wd===6&&d>=18&&d<=19) days[k]={t:'work',n:0,s:4,p:false,note:'Samedi, livraison dalle'};
+    if(wd>=1&&wd<=5){var s=sup[d]||0;days[k]={t:'work',n:7,s:s,p:true,note:'',a:'08:00',b:tstr(16*60+s*60),pz:1};}
+    if(wd===6&&d>=18&&d<=19) days[k]={t:'work',n:0,s:4,p:false,note:'Samedi, livraison dalle',sm:true,a:'07:00',b:'11:00'};
   }
   // un congé et une absence pour montrer le calendrier
   [7,8].forEach(function(d){var dt=new Date(y,m,d,12); if(dt<=today&&dt.getDay()>=1&&dt.getDay()<=5) days[F.iso(dt)]={t:'cp',n:0,s:0,p:false,note:''};});
@@ -373,13 +662,38 @@ function sample(){
   return days;
 }
 var DEF={settings:{contrat:'cdi',statut:'ouvrier',btp:true,rate:13.2,weekly:35,daily:7,panier:10.9,start:'2025-03-10',cpBefore:5},days:null,sample:true};
-var S=F.store.get(KEY,null);
+// Réglages ajoutés en v3 : on complète sans toucher aux anciens
+var SDEF={nightOn:false,nightFrom:'21:00',nightTo:'06:00',nightPct:20,sunPct:0,holPct:0,hStart:'08:00',pause:1};
+var S=F.store.get(KEY,null), firstRun=!S;
 if(!S||!S.settings){S=JSON.parse(JSON.stringify(DEF));S.days=sample();}
+Object.keys(SDEF).forEach(function(k){if(S.settings[k]==null)S.settings[k]=SDEF[k]});
+if(!S.missions) S.missions=[];
 function save(){F.store.set(KEY,S)}
 function isPlus(){return !!F.store.get('fdc-plus',false)}
 // anciens réglages sans ce choix : BTP par défaut
 function isBtp(st){return st.btp!==false}
 var view={y:today.getFullYear(),m:today.getMonth()};
+
+/* ---------- heures de début et de fin ---------- */
+function tmin(s){var m=String(s||'').match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null}
+function tstr(min){min=((Math.round(min)%1440)+1440)%1440;return pad(Math.floor(min/60))+':'+pad(min%60)}
+// Durée entre début et fin en minutes ; une fin plus tôt que le début passe minuit
+function span(a,b){var x=tmin(a),y=tmin(b);if(x==null||y==null)return null;var d=y-x;if(d<0)d+=1440;return d}
+// Heures passées dans la plage de nuit (ex. 21:00 → 06:00)
+function nightHours(a,b,st){
+  var x=tmin(a),y=tmin(b),f=tmin(st.nightFrom),t=tmin(st.nightTo); if(x==null||y==null||f==null||t==null) return 0;
+  if(y<=x)y+=1440; if(t<=f)t+=1440; var tot=0;
+  for(var o=-1440;o<=1440;o+=1440) tot+=Math.max(0,Math.min(y,t+o)-Math.max(x,f+o));
+  return tot/60;
+}
+// Total, heures normales, sup et nuit d'une journée en cours de saisie
+function dayCalc(dr,st){
+  var sp=span(dr.a,dr.b), tot=sp!=null?F.quarter(Math.max(0,sp/60-(dr.pz||0))):(dr.n||0)+(dr.s||0);
+  var s=dr.sm?Math.min(dr.s||0,tot):F.quarter(Math.max(0,tot-st.daily));
+  var nh=sp!=null?Math.min(tot,F.quarter(nightHours(dr.a,dr.b,st))):(dr.nh||0);
+  return {tot:tot,n:tot-s,s:s,nh:nh};
+}
+function missionName(id){for(var i=0;i<S.missions.length;i++)if(S.missions[i].id===id)return S.missions[i].name;return ''}
 
 /* ---------- calculs ---------- */
 function mondayOf(d){var x=new Date(d);x.setDate(x.getDate()-(x.getDay()+6)%7);return F.iso(x)}
@@ -389,16 +703,26 @@ function supSplit(){
   Object.keys(weeks).forEach(function(w){var used=0;weeks[w].forEach(function(k){var s=S.days[k].s,a=F.splitWeek(used,wk),b=F.splitWeek(used+s,wk);out[k]={s10:b.s10-a.s10,s25:b.s25-a.s25,s50:b.s50-a.s50};used+=s})});
   return out;
 }
+// Majorations brutes d'un jour : nuit, dimanche, jour férié (taux choisis dans Réglages)
+function dayMaj(k,e,st){
+  if(!e||e.t!=='work') return 0;
+  var h=e.n+(e.s||0), r=st.rate, m=0;
+  if(st.nightOn) m+=(e.nh||0)*r*(+st.nightPct||0)/100;
+  if(F.parse(k).getDay()===0) m+=h*r*(+st.sunPct||0)/100;
+  if(F.HOLI[k]) m+=h*r*(+st.holPct||0)/100;
+  return m;
+}
 function inMonth(k,y,m){var d=F.parse(k);return d.getFullYear()===y&&d.getMonth()===m}
 function monthData(y,m){
-  var sp=supSplit(), t={n:0,s:0,s10:0,s25:0,s50:0,pan:0,cp:0,maladie:0,absent:0};
+  var sp=supSplit(), st=S.settings, t={n:0,s:0,s10:0,s25:0,s50:0,pan:0,cp:0,maladie:0,absent:0,nh:0,maj:0};
   Object.keys(S.days).forEach(function(k){if(!inMonth(k,y,m))return;var e=S.days[k];
-    if(e.t==='work'){t.n+=e.n;t.s+=e.s||0;var x=sp[k]||{s10:0,s25:0,s50:0};t.s10+=x.s10;t.s25+=x.s25;t.s50+=x.s50;if(e.p)t.pan++;}
+    if(e.t==='work'){t.n+=e.n;t.s+=e.s||0;t.nh+=e.nh||0;t.maj+=dayMaj(k,e,st);var x=sp[k]||{s10:0,s25:0,s50:0};t.s10+=x.s10;t.s25+=x.s25;t.s50+=x.s50;if(e.p)t.pan++;}
     else t[e.t]++;});
-  var st=S.settings;
-  t.pay=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:t.s10,s25:t.s25,s50:t.s50,absH:t.absent*st.daily,maladieJours:t.maladie,cpJours:t.cp,paniers:t.pan,panierAmt:st.panier});
+  t.pay=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:t.s10,s25:t.s25,s50:t.s50,absH:t.absent*st.daily,maladieJours:t.maladie,cpJours:t.cp,paniers:t.pan,panierAmt:st.panier,maj:t.maj});
   return t;
 }
+// Garde la paie de chaque mois déjà calculée pendant un rendu
+function payCache(){var c={};return function(k){var mk=k.slice(0,7);if(!c[mk]){var d=F.parse(k);c[mk]=monthData(d.getFullYear(),d.getMonth())}return c[mk]}}
 // Taux horaire moyen des heures normales (39 h : les heures sup du contrat sont incluses)
 function hourRate(st){return st.weekly>35?F.contractMonthly(st.rate,st.weekly)/(st.weekly*52/12):st.rate}
 // Ce que rapporte un jour, en net, avec le taux de cotisations réel du mois
@@ -406,7 +730,7 @@ function dayValue(k,sp,pay){
   var e=S.days[k], st=S.settings; if(!e) return null;
   var cr=pay.cotisRate, c=F.CONTRATS[st.contrat];
   var bonus=c.fin?1:(1+c.precarite)*(1+(pay.caisse?0:c.icp));
-  if(e.t==='work'){var x=sp[k]||{s10:0,s25:0,s50:0};var b=(e.n*hourRate(st)+(x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate)*bonus;return b*(1-cr)+(e.p?st.panier:0)}
+  if(e.t==='work'){var x=sp[k]||{s10:0,s25:0,s50:0};var b=(e.n*hourRate(st)+(x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate+dayMaj(k,e,st))*bonus;return b*(1-cr)+(e.p?st.panier:0)}
   if(e.t==='cp') return F.cpDayValue(st.rate,st.weekly,0).best*(1-cr);
   return -st.daily*hourRate(st)*(1-cr);
 }
@@ -415,9 +739,87 @@ function dayValue(k,sp,pay){
 function render(){
   $('sampleBanner').hidden=!S.sample;
   var p=isPlus(); $('plan').textContent=p?'Plus':'Gratuit'; $('plan').className='plan'+(p?' on':'');
-  renderMois();renderSup();renderConges();renderPaie();renderContrat();
+  renderToday();renderHist();renderResume();renderConges();renderPaie();renderReglages();
 }
-function renderMois(){
+
+/* Aujourd'hui */
+var cur=TODAY, dr=null, dirty=false, saved=false;
+function lastMission(){return S.lastMission&&missionName(S.lastMission)?S.lastMission:''}
+function loadDay(k){
+  if(dirty&&dr) saveDay(true);
+  cur=k; var e=S.days[k], d=F.parse(k), wd=d.getDay(), st=S.settings;
+  if(e){
+    dr=JSON.parse(JSON.stringify(e)); if(!dr.t) dr.t='work';
+    // jour noté sans heures de début et de fin : on garde le partage normales / sup tel quel
+    if(dr.t==='work'&&!dr.a&&(dr.s||0)!==F.quarter(Math.max(0,dr.n+(dr.s||0)-st.daily))) dr.sm=true;
+  }else{
+    dr={t:'work',n:0,s:0,p:false,note:'',pz:0,m:lastMission()};
+    if(wd>=1&&wd<=5&&!F.HOLI[k]){dr.a=st.hStart||'08:00';dr.pz=+st.pause||0;dr.b=tstr(tmin(dr.a)+Math.round((st.daily+dr.pz)*60));dr.p=true;}
+  }
+  saved=!!e; dirty=false; renderToday();
+}
+function touch(){dirty=true;renderToday()}
+function draftValue(c){
+  var st=S.settings, d=F.parse(cur), pay=monthData(d.getFullYear(),d.getMonth()).pay, cr=pay.cotisRate||F.cotisRate(st.contrat,st.statut);
+  if(dr.t==='work') return (c.n*hourRate(st)+c.s*st.rate*(st.weekly<35?1.1:1.25)+dayMaj(cur,{t:'work',n:c.n,s:c.s,nh:c.nh},st))*(1-cr)+(dr.p?st.panier:0);
+  if(dr.t==='cp') return F.cpDayValue(st.rate,st.weekly,0).best*(1-cr);
+  return -st.daily*hourRate(st)*(1-cr);
+}
+function renderToday(){
+  if(!dr) return;
+  var st=S.settings, d=F.parse(cur), wd=d.getDay(), diff=Math.round((d-today)/864e5);
+  $('dRel').textContent=diff===0?'Aujourd\'hui':diff===-1?'Hier':diff===1?'Demain':(F.HOLI[cur]?'Jour férié':wd===0||wd===6?'Week-end':cap(MONTHS[d.getMonth()]));
+  $('dTitle').textContent=cap(DOWL[wd])+' '+d.getDate()+' '+MONTHS[d.getMonth()]+(d.getFullYear()!==today.getFullYear()?' '+d.getFullYear():'');
+  $('dType').innerHTML=Object.keys(TYPES).map(function(t){return '<button type="button" data-t="'+t+'" aria-pressed="'+(dr.t===t)+'">'+TYPES[t]+'</button>'}).join('');
+  var work=dr.t==='work', c=dayCalc(dr,st), running=work&&dr.a&&!dr.b;
+  $('dWork').hidden=!work; $('dTotal').hidden=!work; $('dTypeBig').hidden=work;
+  if(work){if(document.activeElement!==$('dTotal')) $('dTotal').value=F.hours(c.tot);}
+  else $('dTypeBig').textContent=TYPES[dr.t];
+  var v=draftValue(c);
+  $('dVal').textContent=running?'Commencée à '+dr.a.replace(':','h'):(work&&!c.tot?'':(v<0?'Retenue ≈ −':'≈ ')+F.eur0.format(Math.abs(v))+' net');
+  var stEl=$('dStatus');
+  stEl.className='status'+(running?' run':saved&&!dirty?' ok':'');
+  stEl.textContent=running?'Journée en cours':saved?(dirty?'Modifiée, pas encore enregistrée':'✓ Enregistrée'):'Pas encore enregistrée';
+  if(work){
+    ['a','b'].forEach(function(f){var i=$(f==='a'?'dStart':'dEnd');if(document.activeElement!==i)i.value=dr[f]||'';i.closest('.tcard').classList.toggle('empty',!dr[f]);$(i.id+'Txt').textContent=dr[f]?dr[f].replace(':','h'):'--h--'});
+    $('dPause').textContent=F.hours(dr.pz||0);
+    $('dSup').textContent=F.hours(c.s);
+    $('dSupHint').innerHTML=dr.sm?'<button type="button" class="linkbtn" id="supAuto">réglé à la main · auto</button>':'au-delà de '+F.hours(st.daily);
+    $('dNote').textContent=dr.note||'Ajouter';
+    $('dNight').textContent=st.nightOn?F.hours(c.nh)+' · +'+(+st.nightPct||0)+' %':(c.nh?F.hours(c.nh)+' · non majorées':'Désactivé');
+    var mn=missionName(dr.m); $('dMission').textContent=mn||'+ Ajouter une mission'; $('dMissionHint').textContent=mn?'Toucher pour changer':'(facultatif)';
+    $('dPanier').checked=!!dr.p; $('dPanierAmt').textContent=F.eur2.format(st.panier)+' par jour';
+    var p=$('punch'), isToday=cur===TODAY;
+    p.hidden=!isToday||(saved&&dr.a&&dr.b&&!running);
+    p.innerHTML=running?'■ Je termine maintenant':'▶ Je commence maintenant';
+  }
+  var btpCp=F.caisseCP(st.contrat,isBtp(st));
+  var info={work:'',cp:btpCp?'Ce jour est retiré de votre fiche et payé à part par la caisse CIBTP.':'Un jour de congé payé est décompté de votre solde.',maladie:'Les 3 premiers jours ne sont pas payés par la Sécu (carence), sauf si votre convention le prévoit.',absent:'Une absence non autorisée est retirée de votre salaire.'};
+  $('dInfo').textContent=info[dr.t]; $('dInfo').hidden=!info[dr.t];
+  $('dSave').textContent=saved?(dirty?'Enregistrer les modifications':'Enregistrée ✓'):'Enregistrer la journée';
+  $('dDel').hidden=!saved;
+  var r=F.store.get(REM_KEY,null), now=new Date();
+  $('remBanner').hidden=!(r&&r.on&&cur===TODAY&&!S.days[TODAY]&&r.days.indexOf(now.getDay())>=0&&now.getHours()*60+now.getMinutes()>=tmin(r.time));
+}
+function saveDay(silent){
+  var st=S.settings;
+  if(S.sample){S.days={};S.sample=false}
+  var e={t:dr.t,n:0,s:0,p:false,note:(dr.note||'').slice(0,60)};
+  if(dr.m) e.m=dr.m;
+  if(dr.t==='work'){
+    var c=dayCalc(dr,st); e.n=c.n; e.s=c.s; e.p=!!dr.p;
+    if(dr.a) e.a=dr.a; if(dr.b) e.b=dr.b; if(dr.pz) e.pz=dr.pz; if(dr.sm) e.sm=true; if(c.nh) e.nh=c.nh;
+    if(!e.n&&!e.s&&!e.a){delete S.days[cur];save();dirty=false;saved=false;if(!silent){render();toast('Rien à enregistrer pour ce jour')}return}
+    if(dr.a&&dr.b){st.hStart=dr.a;st.pause=dr.pz||0}
+    if(dr.m) S.lastMission=dr.m;
+  }
+  S.days[cur]=e; save(); dirty=false; saved=true;
+  if(!silent){render();toast(dr.t==='work'?(dr.a&&!dr.b?'Bonne journée, c\'est noté':'Journée enregistrée'):TYPES[dr.t]+' noté')}
+}
+function openToday(k){go('today');loadDay(k)}
+
+/* Historique */
+function renderHist(){
   var y=view.y,m=view.m,name=MONTHS[m]+' '+y, t=monthData(y,m);
   $('calTitle').textContent=name; $('sumLabel').textContent='Net avant impôt estimé · '+name;
   $('sumNet').textContent=F.eur0.format(t.pay.net);
@@ -435,25 +837,81 @@ function renderMois(){
     var label=d+' '+MONTHS[m];
     if(e){
       v=dayValue(k,sp,t.pay);
-      if(e.t==='work'){cls.push('worked');if(e.s)cls.push('sup');style=' style="--fill:'+Math.round(25+75*v/max)+'%"';
+      if(e.t==='work'){cls.push('worked');if(e.s)cls.push('sup');style=' style="--fill:'+Math.round(25+75*Math.max(0,v)/max)+'%"';
         inner+='<span><span class="amt num">'+Math.round(v)+'€</span><span class="h num">'+F.hours(e.n+(e.s||0))+'</span></span>';label+=', '+F.hours(e.n+(e.s||0))+', '+F.eur0.format(v);}
       else{cls.push(e.t);inner+='<span><span class="amt num">'+(v<0?'−':'')+Math.abs(Math.round(v))+'€</span><span class="h">'+TYPES[e.t].toLowerCase()+'</span></span>';label+=', '+TYPES[e.t];}
     }else if(F.HOLI[k]){inner+='<span class="h">férié</span>';label+=', férié';}
     html+='<button type="button" class="'+cls.join(' ')+'"'+style+' data-k="'+k+'" aria-label="'+label+'">'+inner+'</button>';
   }
   cal.innerHTML=html;
+  missionSelect('hMission','hMissionRow');
+  var mf=$('hMission').value, pc=payCache();
+  var keys=Object.keys(S.days).filter(function(k){return inMonth(k,y,m)&&(!mf||S.days[k].m===mf)}).sort().reverse();
+  $('hList').innerHTML=keys.length?keys.map(function(k){return histRow(k,sp,pc(k).pay)}).join('')
+    :'<div class="empty"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/></svg><h3>Aucune journée enregistrée</h3><p>Vos journées de '+MONTHS[m]+' apparaîtront ici dès que vous les aurez notées.</p><button class="btn btn-blue" type="button" data-gotoday>Aller à Aujourd\'hui</button></div>';
 }
-function renderSup(){
-  var y=view.y,m=view.m,t=monthData(y,m),st=S.settings,sp=supSplit();
-  $('supLabel').textContent=MONTHS[m]+' '+y;
-  $('supTotal').textContent=F.hours(t.s); $('supEur').textContent='+'+F.eur0.format(t.pay.hs);
+function histRow(k,sp,pay){
+  var e=S.days[k], d=F.parse(k), v=dayValue(k,sp,pay), work=e.t==='work', title=missionName(e.m)||(work?(e.note||'Journée de travail'):TYPES[e.t]);
+  var sub=[];
+  if(work&&e.a) sub.push(e.a+' → '+(e.b||'en cours'));
+  if(work&&e.pz) sub.push('Pause '+F.hours(e.pz));
+  if(!work&&missionName(e.m)) sub.push(TYPES[e.t]);
+  if(e.note&&missionName(e.m)) sub.push(esc(e.note));
+  return '<button type="button" class="hrow" data-k="'+k+'"><span class="dbox"><small>'+DSHORT[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MSHORT[d.getMonth()]+'</small></span>'+
+    '<span class="mid"><b>'+esc(title)+'</b>'+sub.map(function(s){return '<span>'+s+'</span>'}).join('')+(work&&e.s?'<span class="sup">dont '+F.hours(e.s)+' sup</span>':'')+(work&&e.nh?'<span>dont '+F.hours(e.nh)+' de nuit</span>':'')+'</span>'+
+    '<span class="r"><b class="num">'+(work?F.hours(e.n+(e.s||0)):'1 j')+'</b><span class="num'+(v<0?' neg':'')+'">'+(v<0?'−':'≈ ')+F.eur2.format(Math.abs(v))+'</span></span></button>';
+}
+function missionSelect(id,rowId){
+  var sel=$(id), old=sel.value;
+  $(rowId).hidden=!S.missions.length;
+  sel.innerHTML='<option value="">Toutes les missions</option>'+S.missions.map(function(m){return '<option value="'+esc(m.id)+'">'+esc(m.name)+'</option>'}).join('');
+  sel.value=missionName(old)?old:'';
+}
+
+/* Résumé */
+var rs={mode:'month',d:new Date(today)};
+function rangeOf(){
+  var d=rs.d, from, to, label;
+  if(rs.mode==='week'){from=F.parse(mondayOf(d));to=addDays(from,6);
+    label=from.getMonth()===to.getMonth()?from.getDate()+' – '+to.getDate()+' '+MSHORT[to.getMonth()]+' '+to.getFullYear():from.getDate()+' '+MSHORT[from.getMonth()]+' – '+to.getDate()+' '+MSHORT[to.getMonth()]+' '+to.getFullYear();}
+  else if(rs.mode==='month'){from=new Date(d.getFullYear(),d.getMonth(),1,12);to=new Date(d.getFullYear(),d.getMonth()+1,0,12);label=cap(MONTHS[d.getMonth()])+' '+d.getFullYear();}
+  else{from=new Date(d.getFullYear(),0,1,12);to=new Date(d.getFullYear(),11,31,12);label='Année '+d.getFullYear();}
+  return {from:from,to:to,a:F.iso(from),b:F.iso(to),label:label};
+}
+function periodKeys(r,mf){return Object.keys(S.days).filter(function(k){return k>=r.a&&k<=r.b&&(!mf||S.days[k].m===mf)}).sort()}
+function renderResume(){
+  document.querySelectorAll('#rMode button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.m===rs.mode?'true':'false')});
+  var r=rangeOf(); $('rTitle').textContent=r.label;
+  missionSelect('rMission','rMissionRow');
+  var mf=$('rMission').value, keys=periodKeys(r,mf), sp=supSplit(), pc=payCache(), st=S.settings;
+  var t={h:0,s:0,days:0,nh:0,cp:0,abs:0,net:0};
+  keys.forEach(function(k){var e=S.days[k];if(e.t==='work'){var h=e.n+(e.s||0);t.h+=h;t.s+=e.s||0;t.nh+=e.nh||0;if(h>0)t.days++}else if(e.t==='cp')t.cp++;else t.abs++;t.net+=dayValue(k,sp,pc(k).pay)||0});
+  var netLbl='≈ '+F.eur0.format(t.net)+' net pour ces jours';
+  // Mois ou année entiers : on reprend la paie estimée du mois (salaire de base compris)
+  if(!mf&&rs.mode!=='week'){var tot=0,months={};keys.forEach(function(k){months[k.slice(0,7)]=1});Object.keys(months).forEach(function(mk){tot+=pc(mk+'-01').pay.net});netLbl='≈ '+F.eur0.format(tot)+' net avant impôt';}
+  if(!keys.length){
+    $('rCard').innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg><h3>Rien sur cette période</h3><p>Notez une journée pour voir vos heures, vos jours travaillés et ce qu\'ils vous rapportent.</p><button class="btn btn-blue" type="button" data-gotoday>Aller à Aujourd\'hui</button></div>';
+  }else{
+    var bars=[];
+    if(rs.mode==='week'){for(var i=0;i<7;i++){var k=F.iso(addDays(r.from,i)),e=S.days[k],h=e&&e.t==='work'&&(!mf||e.m===mf)?e.n+(e.s||0):0;bars.push([DOW[i],h])}}
+    else if(rs.mode==='month'){var w=F.parse(mondayOf(r.from));while(F.iso(w)<=r.b){var a=F.iso(w),b=F.iso(addDays(w,6)),h2=0;keys.forEach(function(k){if(k>=a&&k<=b&&S.days[k].t==='work')h2+=S.days[k].n+(S.days[k].s||0)});bars.push(['S'+(bars.length+1),h2]);w=addDays(w,7)}}
+    else{for(var mo=0;mo<12;mo++){var h3=0;keys.forEach(function(k){if(+k.slice(5,7)===mo+1&&S.days[k].t==='work')h3+=S.days[k].n+(S.days[k].s||0)});bars.push([MSHORT[mo].charAt(0).toUpperCase(),h3])}}
+    var mx=Math.max.apply(null,bars.map(function(x){return x[1]}).concat([1]));
+    $('rCard').innerHTML='<div style="text-align:center"><div class="eyebrow">'+(rs.mode==='week'?'Total de la semaine':rs.mode==='month'?'Total du mois':'Total de l\'année')+'</div>'+
+      '<div class="big num" style="margin-top:6px">'+F.hours(t.h)+'</div><div class="muted">heures travaillées</div><div class="dval num" style="margin-top:6px">'+netLbl+'</div></div>'+
+      '<div class="stats"><div><b class="num">'+F.hours(t.s)+'</b><span>dont heures sup</span></div><div><b class="num">'+t.days+'</b><span>jours travaillés</span></div><div><b class="num">'+F.hours(t.nh)+'</b><span>de nuit</span></div><div><b class="num">'+(t.cp+t.abs)+' j</b><span>congés, absences</span></div></div>'+
+      '<div class="vbars" aria-hidden="true">'+bars.map(function(x){var z=!x[1];return '<div class="vb">'+(z?'':'<em class="num">'+(rs.mode==='week'?F.hours(x[1]).replace(/h00$/,'h'):Math.round(x[1])+'h')+'</em>')+'<i class="'+(z?'z':'')+'" style="height:'+(z?2:Math.max(4,100*x[1]/mx)).toFixed(1)+'%"></i><span>'+x[0]+'</span></div>'}).join('')+'</div>';
+  }
+  // Heures sup de la période
+  var supKeys=keys.filter(function(k){return S.days[k].s>0}).reverse(), eur=0;
+  supKeys.forEach(function(k){var x=sp[k];eur+=(x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate});
+  $('supTotal').textContent=F.hours(t.s); $('supEur').textContent='+'+F.eur0.format(eur);
   $('supRule').innerHTML=supRuleText(st.weekly);
-  var keys=Object.keys(S.days).filter(function(k){return inMonth(k,y,m)&&S.days[k].s>0}).sort().reverse();
-  $('supList').innerHTML=keys.length?keys.map(function(k){var d=F.parse(k),x=sp[k],e=S.days[k];
-    return '<button type="button" class="li" data-k="'+k+'"><div><b>'+cap(DOWL[d.getDay()])+' '+d.getDate()+'</b><div class="muted" style="font-size:14px">'+(e.note?esc(e.note):'&nbsp;')+'</div></div><div class="r"><div class="num"><b>'+F.hours(e.s)+'</b> · '+F.eur2.format((x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate)+'</div><div>'+(x.s10?'<span class="pill p25">'+F.hours(x.s10)+' +10 %</span> ':'')+(x.s25?'<span class="pill p25">'+F.hours(x.s25)+' +25 %</span> ':'')+(x.s50?'<span class="pill p50">'+F.hours(x.s50)+' +50 %</span>':'')+'</div></div></button>'}).join(''):'<p class="muted">Pas encore d\'heures sup ce mois-ci.</p>';
+  $('supList').innerHTML=supKeys.length?supKeys.map(function(k){var d=F.parse(k),x=sp[k],e=S.days[k];
+    return '<button type="button" class="li" data-k="'+k+'"><div><b>'+cap(DOWL[d.getDay()])+' '+d.getDate()+' '+MSHORT[d.getMonth()]+'</b><div class="muted" style="font-size:14px">'+(esc(missionName(e.m)||e.note||'')||'&nbsp;')+'</div></div><div class="r"><div class="num"><b>'+F.hours(e.s)+'</b> · '+F.eur2.format((x.s10*1.1+x.s25*1.25+x.s50*1.5)*st.rate)+'</div><div>'+(x.s10?'<span class="pill p25">'+F.hours(x.s10)+' +10 %</span> ':'')+(x.s25?'<span class="pill p25">'+F.hours(x.s25)+' +25 %</span> ':'')+(x.s50?'<span class="pill p50">'+F.hours(x.s50)+' +50 %</span>':'')+'</div></div></button>'}).join(''):'<p class="muted" style="margin:0">Pas d\'heures sup sur cette période.</p>';
 }
 function supRuleText(w){
-  if(w>35){var inc=Math.min(w-35,8),left=Math.max(0,8-(w-35));
+  if(w>35){var left=Math.max(0,8-(w-35));
     return 'Votre contrat de <b>'+F.hours(w)+'</b> comprend déjà <b>'+F.hours(w-35)+'</b> sup par semaine, payées sur chaque fiche'+(w-35>8?' (8 h à +25 %, le reste à +50 %)':' à +25 %')+'. Les heures notées ici viennent en plus : '+(left?'<b>'+F.hours(left)+'</b> encore à <b>+25 %</b>, puis ':'')+'<b>+50 %</b>.';}
   if(w<35){var b10=Math.min(w*0.1,35-w);
     return 'Temps partiel (<b>'+F.hours(w)+'</b>) : les heures en plus sont payées <b>+10 %</b> jusqu\'à <b>'+F.hours(b10)+'</b> par semaine, puis <b>+25 %</b>.';}
@@ -488,12 +946,14 @@ function renderConges(){
 }
 function renderPaie(){
   var y=view.y,m=view.m,t=monthData(y,m),p=t.pay,st=S.settings;
+  $('pTitle').textContent=MONTHS[m]+' '+y;
   $('payLabel').textContent='Paie estimée · '+MONTHS[m]+' '+y+' · '+F.CONTRATS[st.contrat].label;
   var L=function(a,b,cls){return '<div class="l'+(cls?' '+cls:'')+'"><span>'+a+'</span><span class="num">'+b+'</span></div>'};
   var cotisTxt=st.contrat==='apprenti'?'sur la part au-dessus de la moitié du SMIC':'moins sur les heures sup';
   $('payLines').innerHTML=L('Salaire de base ('+F.hours(p.baseH)+')',F.eur2.format(p.base))+
     (p.hsContrat?L('Heures sup du contrat ('+F.hours(p.hsContratH)+')',F.eur2.format(p.hsContrat)):'')+
     (p.hs?L('Heures sup notées ('+F.hours(t.s)+')',F.eur2.format(p.hs)):'')+
+    (p.maj?L('Majorations nuit, dimanche, férié',F.eur2.format(p.maj)):'')+
     (p.abs?L('Absences non payées ('+t.absent+' j)','−'+F.eur2.format(p.abs),'neg'):'')+
     (p.mal?L('Maladie ('+t.maladie+' j)','−'+F.eur2.format(p.mal),'neg'):'')+
     (p.cpRetenue?L('Congés ('+t.cp+' j, payés par la caisse CIBTP)','−'+F.eur2.format(p.cpRetenue),'neg'):'')+
@@ -519,71 +979,93 @@ function renderForecast(){
   var worked=Object.keys(S.days).filter(function(k){return inMonth(k,today.getFullYear(),today.getMonth())&&S.days[k].t==='work'&&S.days[k].n>0}).length||1;
   var wd=0; for(var d=1;d<=31;d++){var dt=new Date(y,m,d,12);if(dt.getMonth()!==m)break;if(dt.getDay()>=1&&dt.getDay()<=5&&!F.HOLI[F.iso(dt)])wd++;}
   var supH=t.s/worked*wd, weeks=wd/5, w=F.splitWeek(supH/weeks,st.weekly);
-  var p=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:w.s10*weeks,s25:w.s25*weeks,s50:w.s50*weeks,paniers:Math.round(t.pan/worked*wd),panierAmt:st.panier});
+  var p=F.computePay({rate:st.rate,weekly:st.weekly,daily:st.daily,contrat:st.contrat,statut:st.statut,btp:isBtp(st),s10:w.s10*weeks,s25:w.s25*weeks,s50:w.s50*weeks,paniers:Math.round(t.pan/worked*wd),panierAmt:st.panier,maj:t.maj/worked*wd});
   $('fcLabel').textContent='Prévision · '+MONTHS[m]+' '+y;
   $('fcRange').textContent=F.eur0.format(Math.floor(p.net*.96/10)*10)+' à '+F.eur0.format(Math.ceil(p.net*1.04/10)*10);
   $('fcWhy').textContent=wd+' jours ouvrés, au même rythme d\'heures sup que ce mois-ci (environ '+F.hours(supH)+').';
   var cr=1-p.cotisRate, parts=[['Salaire de base',p.base*cr],['Heures sup',(p.hsContrat+p.hs)*cr],['Paniers',p.paniers]];
+  if(p.maj) parts.push(['Majorations',p.maj*cr]);
   if(p.precarite+p.icp) parts.push(['Primes 10 %',(p.precarite+p.icp)*cr]);
   var mx=Math.max.apply(null,parts.map(function(x){return x[1]}).concat([1]));
   $('fcBars').innerHTML=parts.map(function(x){return '<div class="bar"><span>'+x[0]+'</span><div class="track"><div class="fill" style="width:'+(100*x[1]/mx).toFixed(1)+'%"></div></div><span class="v num">'+F.eur0.format(x[1])+'</span></div>'}).join('');
 }
-function renderContrat(){
+function renderReglages(){
   var st=S.settings;
   document.querySelectorAll('[data-group]').forEach(function(g){g.querySelectorAll('.chip').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===st[g.dataset.group]?'true':'false')})});
   $('contratHint').textContent=F.CONTRATS[st.contrat].hint;
   $('setRate').value=st.rate;$('setWeekly').value=st.weekly;$('setDaily').value=st.daily;$('setPanier').value=st.panier;$('setStart').value=st.start||'';
   $('setBtp').checked=isBtp(st);
+  $('rvMissions').textContent=S.missions.length;
+  var mj=[]; if(st.nightOn) mj.push('nuit'); if(+st.sunPct) mj.push('dim.'); if(+st.holPct) mj.push('férié');
+  $('rvMajo').textContent=mj.length?mj.join(', '):'Aucune';
+  var r=F.store.get(REM_KEY,null); $('rvRappel').textContent=r&&r.on?r.time.replace(':','h'):'Non';
+  var th=F.store.get(THEME_KEY,'auto'); $('rvTheme').textContent={auto:'Auto',light:'Clair',dark:'Sombre'}[th]||'Auto';
+  var plus=isPlus(), o=F.store.get(OFFER_KEY,null);
+  $('plusBannerT').textContent=plus?'Plus est activé':'Pointe ta journée Plus';
+  $('plusBannerS').textContent=plus?(o&&o.plan==='year'?'Offre annuelle · essai de 7 jours (aperçu)':'Offre mensuelle (aperçu)'):'IA fiche de paie · Photo · Missions · Exports';
 }
 
-/* ---------- saisie d'un jour ---------- */
-function openDay(k){
-  var d=F.parse(k), wd=d.getDay(), weekday=wd>=1&&wd<=5;
-  var e=S.days[k]||{t:'work',n:weekday?S.settings.daily:0,s:0,p:weekday,note:''};
-  var dr=JSON.parse(JSON.stringify(e)); if(!dr.t) dr.t='work';
-  var host=$('sheetHost');
-  host.innerHTML='<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">'+
-    '<div class="grab"></div><div><div class="eyebrow">'+(S.days[k]?'Modifier':'Noter')+'</div><h2 id="shT">'+cap(DOWL[wd])+' '+d.getDate()+' '+MONTHS[d.getMonth()]+'</h2></div>'+
-    '<div class="seg" id="shType">'+Object.keys(TYPES).map(function(t){return '<button type="button" data-t="'+t+'" aria-pressed="'+(dr.t===t)+'">'+TYPES[t]+'</button>'}).join('')+'</div>'+
-    '<div id="shWork" class="stack">'+stepper('n','Heures normales','votre journée')+stepper('s','Heures sup','en plus ce jour-là')+
-    '<label class="checkrow"><input type="checkbox" id="shP"'+(dr.p?' checked':'')+'><span><b>Panier repas</b><br><span class="muted" style="font-size:13px">'+F.eur2.format(S.settings.panier)+' par jour</span></span></label></div>'+
-    '<p class="muted" id="shInfo" style="margin:0;font-size:14px"></p>'+
-    '<div class="field"><label for="shNote">Note (chantier, motif…)</label><input id="shNote" type="text" maxlength="60" value="'+esc(dr.note||'')+'" placeholder="ex. Chantier école, coffrage"></div>'+
-    '<div class="dayvalue"><span class="muted" id="shValLbl">Ce jour vous rapporte environ</span><b class="num" id="shVal">0 €</b></div>'+
-    '<div class="row"><button class="btn btn-blue" id="shSave" type="button">Enregistrer</button>'+(S.days[k]?'<button class="btn btn-danger" id="shDel" type="button">Effacer ce jour</button>':'<button class="btn btn-line" id="shCancel" type="button">Annuler</button>')+'</div></div></div>';
-  function upd(){
-    ['n','s'].forEach(function(f){var i=$('o-'+f);if(document.activeElement!==i)i.value=F.hours(dr[f])});
-    $('shWork').hidden=dr.t!=='work';
-    hoursInput(host.querySelectorAll('[data-in]'),function(i,v){dr[i.dataset.in]=Math.min(16,v);upd()},function(i){return dr[i.dataset.in]});
-  host.querySelectorAll('#shType button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.t===dr.t?'true':'false')});
-    var btpCp=F.caisseCP(S.settings.contrat,isBtp(S.settings));
-    var info={work:'',cp:btpCp?'Ce jour est retiré de votre fiche et payé à part par la caisse CIBTP.':'Un jour de congé payé est décompté de votre solde.',maladie:'Les 3 premiers jours ne sont pas payés par la Sécu (carence), sauf si votre convention le prévoit.',absent:'Une absence non autorisée est retirée de votre salaire.'};
-    $('shInfo').textContent=info[dr.t]; $('shInfo').hidden=!info[dr.t];
-    var st=S.settings, cr=monthData(d.getFullYear(),d.getMonth()).pay.cotisRate, v;
-    if(dr.t==='work') v=(dr.n*hourRate(st)+dr.s*st.rate*(st.weekly<35?1.1:1.25))*(1-cr)+($('shP').checked?st.panier:0);
-    else if(dr.t==='cp') v=F.cpDayValue(st.rate,st.weekly,0).best*(1-cr);
-    else v=-st.daily*hourRate(st)*(1-cr);
-    $('shValLbl').textContent=v<0?'Retenue sur le salaire, environ':'Ce jour vous rapporte environ';
-    $('shVal').textContent=(v<0?'−':'')+F.eur0.format(Math.abs(v));
-  }
-  host.querySelectorAll('[data-f]').forEach(function(b){b.addEventListener('click',function(){var f=b.dataset.f;dr[f]=Math.min(16,F.quarter(dr[f]+Number(b.dataset.d)));upd()})});
-  host.querySelectorAll('#shType button').forEach(function(b){b.addEventListener('click',function(){dr.t=b.dataset.t;upd()})});
-  $('shP').addEventListener('change',upd);
-  function close(){host.innerHTML='';document.removeEventListener('keydown',onKey)}
-  function onKey(ev){if(ev.key==='Escape')close()}
-  document.addEventListener('keydown',onKey);
-  $('scrim').addEventListener('click',function(ev){if(ev.target.id==='scrim')close()});
-  $('shSave').addEventListener('click',function(){
-    dr.p=$('shP').checked; dr.note=$('shNote').value.trim();
-    if(dr.t!=='work'){dr.n=0;dr.s=0;dr.p=false}
-    if(dr.t==='work'&&!dr.n&&!dr.s) delete S.days[k]; else S.days[k]=dr;
-    S.sample=false; save(); close(); render(); toast(dr.t==='work'?'Journée enregistrée':TYPES[dr.t]+' noté');
-  });
-  if($('shDel')) $('shDel').addEventListener('click',function(){delete S.days[k];save();close();render();toast('Jour effacé')});
-  if($('shCancel')) $('shCancel').addEventListener('click',close);
-  upd(); $('shSave').focus();
-  function stepper(f,title,hint){return '<div class="stepper"><div class="txt"><b>'+title+'</b><span>'+hint+'</span></div><div class="ctl"><button type="button" data-f="'+f+'" data-d="-0.25" aria-label="Moins un quart d\'heure">−</button><input id="o-'+f+'" class="num hin" type="text" inputmode="text" autocomplete="off" data-in="'+f+'" aria-label="'+title+', ex. 07h30"><button type="button" data-f="'+f+'" data-d="0.25" aria-label="Plus un quart d\'heure">+</button></div></div>'}
+/* ---------- navigation ---------- */
+function go(v){
+  if(VIEWS.indexOf(v)<0) v='today';
+  document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x.dataset.view===v?'true':'false')});
+  VIEWS.forEach(function(n){$('view-'+n).hidden=n!==v});
+  document.title={today:'Aujourd\'hui',hist:'Historique',resume:'Résumé',paie:'Ma paie',reglages:'Réglages'}[v]+' · Pointe ta journée';
+  if(v!=='today'&&dirty) saveDay(false);
+  window.scrollTo(0,0);
+  if(v==='today') showTip();
 }
+document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){go(t.dataset.view)})});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-k]'); if(b&&!b.closest('.sheet')){openToday(b.dataset.k);return}
+  if(e.target.closest('[data-gotoday]')) openToday(TODAY);
+});
+function shiftMonth(n){view.m+=n;if(view.m<0){view.m=11;view.y--}if(view.m>11){view.m=0;view.y++}render()}
+$('prevM').addEventListener('click',function(){shiftMonth(-1)});
+$('nextM').addEventListener('click',function(){shiftMonth(1)});
+$('pPrev').addEventListener('click',function(){shiftMonth(-1)});
+$('pNext').addEventListener('click',function(){shiftMonth(1)});
+$('hMission').addEventListener('change',renderHist);
+$('rMission').addEventListener('change',renderResume);
+$('rMode').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;rs.mode=b.dataset.m;renderResume()});
+function shiftR(n){var d=rs.d;if(rs.mode==='week')rs.d=addDays(d,7*n);else if(rs.mode==='month')rs.d=new Date(d.getFullYear(),d.getMonth()+n,1,12);else rs.d=new Date(d.getFullYear()+n,0,1,12);renderResume()}
+$('rPrev').addEventListener('click',function(){shiftR(-1)});
+$('rNext').addEventListener('click',function(){shiftR(1)});
+
+/* ---------- écran Aujourd'hui ---------- */
+$('dPrev').addEventListener('click',function(){loadDay(F.iso(addDays(F.parse(cur),-1)))});
+$('dNext').addEventListener('click',function(){loadDay(F.iso(addDays(F.parse(cur),1)))});
+$('dType').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;dr.t=b.dataset.t;touch()});
+['dStart','dEnd'].forEach(function(id){var f=id==='dStart'?'a':'b';
+  function upd(){var v=$(id).value;dr[f]=v?v.slice(0,5):null;touch()}
+  $(id).addEventListener('change',upd); $(id).addEventListener('input',upd);
+  $(id).addEventListener('click',function(){try{this.showPicker()}catch(e){}});
+});
+// Total tapé à la main (7h30, 7:30, 7,5) : on oublie début et fin
+hoursInput([$('dTotal')],function(i,v){dr.a=null;dr.b=null;dr.n=Math.min(24,v);dr.s=0;dr.sm=false;dirty=true;renderToday()},function(){return dayCalc(dr,S.settings).tot});
+document.querySelectorAll('[data-pz]').forEach(function(b){b.addEventListener('click',function(){dr.pz=Math.max(0,Math.min(4,F.quarter((dr.pz||0)+Number(b.dataset.pz))));touch()})});
+document.querySelectorAll('[data-sp]').forEach(function(b){b.addEventListener('click',function(){
+  var c=dayCalc(dr,S.settings); dr.sm=true; dr.s=Math.max(0,Math.min(c.tot,F.quarter(c.s+Number(b.dataset.sp)))); dr.n=c.tot-dr.s; touch();
+})});
+$('dSupHint').addEventListener('click',function(e){if(e.target.id==='supAuto'){var c=dayCalc(dr,S.settings);dr.sm=false;dr.n=c.tot;dr.s=0;touch()}});
+$('dPanier').addEventListener('change',function(){dr.p=this.checked;touch()});
+$('dSave').addEventListener('click',function(){saveDay(false)});
+$('dDel').addEventListener('click',function(){delete S.days[cur];save();dirty=false;var k=cur;dr=null;loadDay(k);render();toast('Jour effacé')});
+$('punch').addEventListener('click',function(){
+  var n=new Date(), q=Math.round((n.getHours()*60+n.getMinutes())/15)*15;
+  if(dr.a&&!dr.b&&saved){dr.b=tstr(q)}else{dr.t='work';dr.a=tstr(q);dr.b=null;dr.n=0;dr.s=0;dr.sm=false}
+  saveDay(false);
+});
+$('noteBtn').addEventListener('click',function(){
+  var close=sheet('<div><div class="eyebrow">Note</div><h2 id="phT">Une précision sur ce jour ?</h2></div>'+
+    '<div class="field"><label for="noteIn">Chantier, tâche, motif…</label><input id="noteIn" type="text" maxlength="60" value="'+esc(dr.note||'')+'" placeholder="ex. Chantier école, coffrage"></div>'+
+    '<div class="row"><button class="btn btn-blue" id="noteOk" type="button">Valider</button><button class="btn btn-line" data-close type="button">Annuler</button></div>');
+  $('noteIn').focus();
+  function ok(){dr.note=$('noteIn').value.trim();close();touch()}
+  $('noteOk').addEventListener('click',ok); $('noteIn').addEventListener('keydown',function(e){if(e.key==='Enter')ok()});
+});
+$('nightBtn').addEventListener('click',function(){majoSheet()});
+$('missionBtn').addEventListener('click',function(){missionSheet(true)});
 
 // Champ d'heures qu'on peut taper : 7h30, 7:30, 7,5… (arrondi au quart d'heure)
 function hoursInput(list,set,get){
@@ -595,26 +1077,24 @@ function hoursInput(list,set,get){
   });
 }
 
-/* ---------- événements ---------- */
-function go(v){
-  document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x.dataset.view===v?'true':'false')});
-  ['mois','sup','conges','paie','contrat'].forEach(function(n){$('view-'+n).hidden=n!==v});
-  window.scrollTo(0,0);
+/* ---------- conseils au premier passage ---------- */
+var TIPS=[['tipTimes','Touchez Début ou Fin pour changer l\'heure'],['missionBtn','Plusieurs chantiers ou agences ? Ajoutez une mission']];
+function showTip(){
+  var i=F.store.get(TIPS_KEY,0); if(i>=TIPS.length||!$('onb').hidden||$('view-today').hidden||$('dWork').hidden) return;
+  var host=$(TIPS[i][0]); if(!host||host.querySelector('.tip')) return;
+  if(getComputedStyle(host).position==='static') host.style.position='relative';
+  var t=document.createElement('div'); t.className='tip'; t.setAttribute('role','status'); t.textContent=TIPS[i][1]; host.appendChild(t);
+  setTimeout(function(){document.addEventListener('click',function off(){document.removeEventListener('click',off,true);t.remove();F.store.set(TIPS_KEY,i+1);setTimeout(showTip,250)},true)},50);
 }
-document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){go(t.dataset.view)})});
-document.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(b&&!b.closest('.sheet'))openDay(b.dataset.k)});
-$('prevM').addEventListener('click',function(){view.m--;if(view.m<0){view.m=11;view.y--}render()});
-$('nextM').addEventListener('click',function(){view.m++;if(view.m>11){view.m=0;view.y++}render()});
-$('todayBtn').addEventListener('click',function(){openDay(TODAY)});
 
-/* ---------- heures depuis une photo (Plus) ---------- */
+/* ---------- feuilles ---------- */
 function sheet(inner){
   var host=$('sheetHost');
   host.innerHTML='<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="phT"><div class="grab"></div>'+inner+'</div></div>';
   function close(){host.innerHTML='';document.removeEventListener('keydown',onKey)}
   function onKey(ev){if(ev.key==='Escape')close()}
   document.addEventListener('keydown',onKey);
-  $('scrim').addEventListener('click',function(ev){if(ev.target.id==='scrim'||ev.target.hasAttribute('data-close'))close()});
+  $('scrim').addEventListener('click',function(ev){if(ev.target.id==='scrim'||ev.target.closest('[data-close]'))close()});
   return close;
 }
 function photoMsg(title,text,retry){
@@ -688,30 +1168,11 @@ function reviewPhoto(res){
     });
     save(); close();
     if(first){var d=F.parse(first);view={y:d.getFullYear(),m:d.getMonth()}}
-    go('mois'); render(); toast(saved+' jour'+(saved>1?'s':'')+' ajouté'+(saved>1?'s':''));
+    go('hist'); dirty=false; loadDay(cur); render(); toast(saved+' jour'+(saved>1?'s':'')+' ajouté'+(saved>1?'s':''));
   });
 }
-$('photoBtn').addEventListener('click',function(){
-  if(isPlus()){$('photoIn').click();return}
-  sheet('<div><div class="eyebrow">Pointe ta journée Plus</div><h2 id="phT">Vos heures depuis une photo</h2></div>'+
-    '<p style="margin:0">Photographiez votre feuille de pointage, votre planning ou votre carnet. L\'IA retrouve les jours et les heures, vous vérifiez, et tout est rempli.</p>'+
-    '<div class="row"><button class="btn btn-blue" id="phPlus" type="button">Essayer Plus (aperçu)</button><button class="btn btn-line" data-close type="button">Plus tard</button></div>'+
-    '<span class="muted" style="font-size:13px">Aperçu : aucun paiement n\'est demandé.</span>');
-  $('phPlus').addEventListener('click',function(){F.store.set('fdc-plus',true);$('sheetHost').innerHTML='';render();$('photoIn').click()});
-});
 $('photoIn').addEventListener('change',function(){var f=this.files&&this.files[0];this.value='';if(f)readPhoto(f)});
-$('clearSample').addEventListener('click',function(){S.days={};S.sample=false;save();render();toast('Exemple effacé, à vous de jouer')});
-
-var supAdd=1; $('supDate').value=TODAY;
-document.querySelectorAll('[data-sup]').forEach(function(b){b.addEventListener('click',function(){supAdd=Math.max(.25,Math.min(12,supAdd+Number(b.dataset.sup)));$('supAdd').value=F.hours(supAdd)})});
-hoursInput([$('supAdd')],function(i,v){supAdd=Math.max(.25,Math.min(12,v))},function(){return supAdd});
-$('supSave').addEventListener('click',function(){
-  var k=$('supDate').value; if(!k){toast('Choisissez un jour');return}
-  var d=F.parse(k), e=S.days[k]; if(!e||e.t!=='work') e={t:'work',n:0,s:0,p:false,note:''};
-  e.s=(e.s||0)+supAdd; S.days[k]=e; S.sample=false; save(); view={y:d.getFullYear(),m:d.getMonth()}; render();
-  toast(F.hours(supAdd)+' sup ajoutées le '+d.getDate()+' '+MONTHS[d.getMonth()]);
-});
-
+$('clearSample').addEventListener('click',function(){S.days={};S.sample=false;save();dirty=false;loadDay(cur);render();toast('Exemple effacé, à vous de jouer')});
 $('cpBefore').addEventListener('change',function(){S.settings.cpBefore=Math.max(0,parseInt(this.value,10)||0);save();render()});
 
 $('chkBtn').addEventListener('click',function(){
@@ -732,8 +1193,7 @@ $('chkBtn').addEventListener('click',function(){
   if(!plus) F.store.set(FREE_KEY,{used:true,result:null});
   renderPaie();
 });
-$('subBtn').addEventListener('click',function(){F.store.set('fdc-plus',true);render();toast('Plus activé (aperçu)')});
-$('unsubBtn').addEventListener('click',function(){F.store.set('fdc-plus',false);$('aiOut').innerHTML='';render();toast('Abonnement arrêté')});
+$('unsubBtn').addEventListener('click',function(){F.store.set('fdc-plus',false);F.store.del(OFFER_KEY);$('aiOut').innerHTML='';render();toast('Abonnement arrêté')});
 /* ---------- relevé envoyé à l'employeur (Plus) ---------- */
 var BOSS_KEY='fdc-boss';
 function bossGet(){return F.store.get(BOSS_KEY,null)||{on:false,to:'',name:'',me:'',freq:'week',from:null,last:null}}
@@ -883,25 +1343,253 @@ $('slip').addEventListener('change',function(ev){
   }).catch(function(){out.innerHTML='<p class="muted" style="margin:0">Impossible d\'envoyer la fiche. Vérifiez votre connexion et réessayez.</p>'});
 });
 
+/* ---------- offre Plus ---------- */
+var FEATS=[
+  ['M6 2h9l4 4v16H6z M9 14l2 2 4-4','L\'IA lit votre fiche de paie','Photo ou PDF, comparée à vos heures, en euros.'],
+  ['M4 8h3l2-3h6l2 3h3v12H4z','Vos heures depuis une photo','Feuille de pointage, planning ou carnet.'],
+  ['M3 7h18v13H3z M9 7V5h6v2 M3 12h18','Plusieurs missions','Un chantier, un client ou une agence par jour.'],
+  ['M12 3v12 M7 10l5 5 5-5 M5 21h14','Exports PDF et Excel','Une preuve de vos heures en deux touches.'],
+  ['M4 6h16v12H4z M4 7l8 6 8-6','Relevé à l\'employeur','Chaque semaine ou chaque mois, si vous le voulez.'],
+  ['M4 20V10 M10 20V4 M16 20v-7 M21 20H3','Prévision du mois prochain','Ce qui devrait tomber sur votre compte.']
+];
+function paywall(why){
+  var plan='year';
+  var close=sheet('<div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><span class="spark"><svg viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg></span>'+
+    '<div class="eyebrow" style="color:var(--blue)">Pointe ta journée Plus</div><h2 id="phT" style="font-size:28px">Chaque heure comptée, chaque euro vérifié.</h2>'+
+    (why?'<p class="muted" style="margin:0">'+why+'</p>':'<p class="muted" style="margin:0">Une heure sup oubliée vaut déjà des mois d\'abonnement.</p>')+'</div>'+
+    '<div class="card" style="padding:2px 14px">'+FEATS.map(function(f){return '<div class="feat"><span class="ico" style="background:var(--blue-soft);color:var(--blue)"><svg viewBox="0 0 24 24"><path d="'+f[0]+'"/></svg></span><span class="tx"><b>'+f[1]+'</b><span>'+f[2]+'</span></span></div>'}).join('')+'</div>'+
+    '<div class="plans" style="margin-top:6px">'+
+      '<button type="button" class="planc" data-plan="year" aria-pressed="true"><span class="badge">Meilleur prix</span><b>Annuel</b><span class="amount num">19 €<small> / an</small></span><span class="gift">🎁 7 jours gratuits</span><span class="muted">Soit 1,58 € par mois. Puis 19 € par an.</span></button>'+
+      '<button type="button" class="planc" data-plan="month" aria-pressed="false"><b>Mensuel</b><span class="amount num">2 €<small> / mois</small></span><span class="muted">Sans engagement.</span></button>'+
+    '</div>'+
+    '<button class="btn btn-blue block" id="pwGo" type="button">Essayer 7 jours gratuits →</button>'+
+    '<span class="muted" style="font-size:13px;text-align:center">Annulable à tout moment. Aperçu : le paiement n\'est pas encore branché, rien ne vous est demandé.</span>');
+  var host=$('sheetHost');
+  host.querySelectorAll('[data-plan]').forEach(function(b){b.addEventListener('click',function(){plan=b.dataset.plan;
+    host.querySelectorAll('[data-plan]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    $('pwGo').textContent=plan==='year'?'Essayer 7 jours gratuits →':'Passer à Plus · 2 €/mois →'})});
+  $('pwGo').addEventListener('click',function(){F.store.set('fdc-plus',true);F.store.set(OFFER_KEY,{plan:plan,from:TODAY});close();render();toast('Plus activé (aperçu)')});
+}
+$('subBtn').addEventListener('click',function(){paywall()});
+$('plusBanner').addEventListener('click',function(){if(isPlus()){go('paie')}else paywall()});
+$('plan').addEventListener('click',function(){if(isPlus())go('paie');else paywall()});
+$('photoBtn').addEventListener('click',function(){
+  if(isPlus()){$('photoIn').click();return}
+  paywall('Photographiez votre feuille de pointage, votre planning ou votre carnet : l\'IA remplit vos heures, vous vérifiez.');
+});
+
+/* ---------- export PDF / Excel (Plus) ---------- */
+function exportRows(keys){
+  var sp=supSplit(), pc=payCache();
+  return keys.map(function(k){var e=S.days[k],d=F.parse(k),w=e.t==='work',v=dayValue(k,sp,pc(k).pay)||0;
+    return {date:d.toLocaleDateString('fr-FR'),jour:cap(DOWL[d.getDay()]),type:TYPES[e.t],mission:missionName(e.m),a:w?e.a||'':'',b:w?e.b||'':'',pause:w&&e.pz?F.hours(e.pz):'',h:w?F.hours(e.n+(e.s||0)):'',s:w&&e.s?F.hours(e.s):'',nh:w&&e.nh?F.hours(e.nh):'',p:w&&e.p?'oui':'',note:e.note||'',v:v}});
+}
+function downloadFile(name,type,text){
+  var url=URL.createObjectURL(new Blob([text],{type:type})), a=document.createElement('a');
+  a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url)},4000);
+}
+function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+$('exportBtn').addEventListener('click',function(){
+  if(!isPlus()){paywall('Exportez vos heures en PDF ou en tableau Excel, pour vous, votre employeur ou en cas de litige.');return}
+  var r=rangeOf(), mf=$('rMission').value, keys=periodKeys(r,mf);
+  if(!keys.length){toast('Rien à exporter sur cette période');return}
+  var title='Relevé d\'heures · '+r.label+(mf?' · '+missionName(mf):'');
+  var close=sheet('<div><div class="eyebrow">Exporter</div><h2 id="phT">'+esc(r.label)+'</h2></div><p class="muted" style="margin:0">'+keys.length+' jour'+(keys.length>1?'s':'')+' noté'+(keys.length>1?'s':'')+(mf?' pour '+esc(missionName(mf)):'')+'.</p>'+
+    '<button class="btn btn-blue block" id="exPdf" type="button">PDF (imprimer ou enregistrer)</button><button class="btn btn-line block" id="exCsv" type="button">Tableau Excel (.csv)</button><button class="btn btn-line block" data-close type="button">Annuler</button>');
+  $('exCsv').addEventListener('click',function(){
+    var rows=exportRows(keys), head=['Date','Jour','Type','Mission','Début','Fin','Pause','Heures','dont sup','Heures de nuit','Panier','Note','Net estimé (€)'];
+    var lines=[head].concat(rows.map(function(x){return [x.date,x.jour,x.type,x.mission,x.a,x.b,x.pause,x.h,x.s,x.nh,x.p,x.note,x.v.toFixed(2).replace('.',',')]}));
+    downloadFile('pointe-ta-journee-'+slug(r.label)+'.csv','text/csv;charset=utf-8','﻿'+lines.map(function(l){return l.map(function(c){c=String(c);return /[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(';')}).join('\r\n'));
+    close(); toast('Fichier Excel téléchargé');
+  });
+  $('exPdf').addEventListener('click',function(){
+    var rows=exportRows(keys), tot=0, sup=0; keys.forEach(function(k){var e=S.days[k];if(e.t==='work'){tot+=e.n+(e.s||0);sup+=e.s||0}});
+    var who=bossGet().name;
+    $('printArea').innerHTML='<h1 style="font-size:20px;margin:0 0 4px">'+esc(title)+'</h1><p style="margin:0 0 12px">'+(who?esc(who)+' · ':'')+'Total '+F.hours(tot)+' dont '+F.hours(sup)+' sup · édité le '+today.toLocaleDateString('fr-FR')+' avec Pointe ta journée</p>'+
+      '<table><tr><th>Date</th><th>Type</th><th>Mission</th><th>Début</th><th>Fin</th><th>Pause</th><th>Heures</th><th>dont sup</th><th>Nuit</th><th>Note</th></tr>'+
+      rows.map(function(x){return '<tr><td>'+x.jour.slice(0,3)+'. '+x.date+'</td><td>'+x.type+'</td><td>'+esc(x.mission)+'</td><td>'+x.a+'</td><td>'+x.b+'</td><td>'+x.pause+'</td><td>'+x.h+'</td><td>'+x.s+'</td><td>'+x.nh+'</td><td>'+esc(x.note)+'</td></tr>'}).join('')+'</table>'+
+      '<p style="margin-top:12px;font-size:11px">Heures notées par le salarié. Les montants sont des estimations.</p>';
+    close(); setTimeout(function(){window.print()},100);
+  });
+});
+
+/* ---------- réglages ---------- */
+function missionSheet(pick){
+  function draw(){
+    var html='<div><div class="eyebrow">'+(pick?'Mission du jour':'Mes missions')+'</div><h2 id="phT">'+(pick?'Sur quoi travaillez-vous ?':'Chantiers, clients, agences')+'</h2></div>'+
+      '<div class="stack" style="gap:8px">'+(pick?'<button type="button" class="opt" data-mid="" aria-pressed="'+(!dr.m)+'"><span class="dot"></span><span class="tx"><b>Aucune mission</b></span></button>':'')+
+      S.missions.map(function(m){return '<div class="opt" role="button" tabindex="0" data-mid="'+esc(m.id)+'" aria-pressed="'+(pick&&dr.m===m.id)+'">'+(pick?'<span class="dot"></span>':'')+'<span class="tx"><b>'+esc(m.name)+'</b><span>'+Object.keys(S.days).filter(function(k){return S.days[k].m===m.id}).length+' jour(s)</span></span><button type="button" class="del" data-delm="'+esc(m.id)+'">Supprimer</button></div>'}).join('')+
+      (S.missions.length||pick?'':'<p class="muted" style="margin:0">Aucune mission pour l\'instant.</p>')+'</div>'+
+      '<div class="field"><label for="mNew">Nouvelle mission</label><div class="row"><input id="mNew" type="text" maxlength="40" placeholder="ex. Chantier école, Agence Adecco" style="flex:1 1 180px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--paper)"><button class="btn btn-line" id="mAdd" type="button" style="flex:0 0 auto">Ajouter</button></div>'+
+      (isPlus()?'':'<span class="hint">Gratuit : une mission. Plusieurs missions avec Plus.</span>')+'</div>'+
+      '<button class="btn btn-line block" data-close type="button">Fermer</button>';
+    return html;
+  }
+  var close=sheet(draw()), host=$('sheetHost');
+  function wire(){
+    host.querySelectorAll('[data-delm]').forEach(function(b){b.addEventListener('click',function(ev){ev.stopPropagation();var id=b.dataset.delm;
+      S.missions=S.missions.filter(function(m){return m.id!==id});Object.keys(S.days).forEach(function(k){if(S.days[k].m===id)delete S.days[k].m});if(dr&&dr.m===id)dr.m='';save();refresh()})});
+    if(pick) host.querySelectorAll('[data-mid]').forEach(function(b){b.addEventListener('click',function(){dr.m=b.dataset.mid;close();touch()})});
+    $('mAdd').addEventListener('click',add); $('mNew').addEventListener('keydown',function(e){if(e.key==='Enter')add()});
+  }
+  function refresh(){host.querySelector('.sheet').innerHTML='<div class="grab"></div>'+draw();wire();render()}
+  function add(){
+    var n=$('mNew').value.trim(); if(!n){$('mNew').focus();return}
+    if(!isPlus()&&S.missions.length>=1){close();paywall('Avec Plus, notez plusieurs missions et voyez vos heures et votre paie mission par mission.');return}
+    var m={id:'m'+Date.now().toString(36),name:n.slice(0,40)}; S.missions.push(m); save();
+    if(pick){dr.m=m.id;close();touch();render();return}
+    refresh();
+  }
+  wire();
+}
+function majoSheet(){
+  var st=S.settings;
+  var close=sheet('<div><div class="eyebrow">Majorations</div><h2 id="phT">Nuit, dimanche et jours fériés</h2></div>'+
+    '<label class="checkrow"><input type="checkbox" id="mjOn"'+(st.nightOn?' checked':'')+'><span><b>Majorer mes heures de nuit</b><br><span class="muted" style="font-size:13px">Les heures dans la plage sont comptées toutes seules à partir de Début et Fin.</span></span></label>'+
+    '<div class="two"><div class="field"><label for="mjFrom">Nuit à partir de</label><input id="mjFrom" type="time" step="900" value="'+st.nightFrom+'"></div><div class="field"><label for="mjTo">Jusqu\'à</label><input id="mjTo" type="time" step="900" value="'+st.nightTo+'"></div></div>'+
+    '<div class="field"><label for="mjPct">Majoration de nuit</label><div class="unit"><input id="mjPct" type="number" inputmode="decimal" min="0" step="1" value="'+(+st.nightPct||0)+'"><span>%</span></div></div>'+
+    '<div class="two"><div class="field"><label for="mjSun">Dimanche</label><div class="unit"><input id="mjSun" type="number" inputmode="decimal" min="0" step="1" value="'+(+st.sunPct||0)+'"><span>%</span></div></div><div class="field"><label for="mjHol">Jour férié</label><div class="unit"><input id="mjHol" type="number" inputmode="decimal" min="0" step="1" value="'+(+st.holPct||0)+'"><span>%</span></div></div></div>'+
+    '<div class="rule">Exemple : de 22h00 à 06h00 avec une plage de nuit 21h00 → 06h00, les 8 heures sont majorées. Les taux dépendent de votre convention collective ou de votre contrat : laissez 0 si vous n\'en avez pas.</div>'+
+    '<div class="row"><button class="btn btn-blue" id="mjOk" type="button">Enregistrer</button><button class="btn btn-line" data-close type="button">Annuler</button></div>');
+  $('mjOk').addEventListener('click',function(){
+    var n=function(id){var v=parseFloat(String($(id).value).replace(',','.'));return isNaN(v)||v<0?0:Math.min(300,v)};
+    st.nightOn=$('mjOn').checked; st.nightFrom=$('mjFrom').value||'21:00'; st.nightTo=$('mjTo').value||'06:00'; st.nightPct=n('mjPct'); st.sunPct=n('mjSun'); st.holPct=n('mjHol');
+    // les heures de nuit des jours déjà notés suivent la nouvelle plage
+    Object.keys(S.days).forEach(function(k){var e=S.days[k];if(e.t==='work'&&e.a&&e.b){var h=Math.min(e.n+(e.s||0),F.quarter(nightHours(e.a,e.b,st)));if(h)e.nh=h;else delete e.nh}});
+    save(); close(); render(); toast('Majorations enregistrées');
+  });
+}
+function icsDate(d,t){return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'T'+t.replace(':','')+'00'}
+function rappelSheet(){
+  var r=F.store.get(REM_KEY,null)||{on:false,time:'18:00',days:[1,2,3,4,5]};
+  var close=sheet('<div><div class="eyebrow">Rappel quotidien</div><h2 id="phT">Ne plus oublier de noter</h2></div>'+
+    '<div class="field"><label for="rmT">Heure du rappel</label><input id="rmT" type="time" step="900" value="'+r.time+'"></div>'+
+    '<div class="field"><span class="lbl">Jours</span><div class="chips daychips" id="rmD">'+[1,2,3,4,5,6,0].map(function(d){return '<button type="button" class="chip" data-d="'+d+'" aria-pressed="'+(r.days.indexOf(d)>=0)+'">'+DOW[(d+6)%7]+'</button>'}).join('')+'</div></div>'+
+    '<button class="btn btn-blue block" id="rmCal" type="button">Ajouter le rappel à mon calendrier</button>'+
+    '<p class="muted" style="margin:0;font-size:14px">Le rappel arrive comme une alerte de votre téléphone, même appli fermée. Sur iPhone, touchez « Ajouter tout » après le téléchargement.</p>'+
+    '<label class="checkrow"><input type="checkbox" id="rmOn"'+(r.on?' checked':'')+'><span><b>Me le rappeler aussi dans l\'appli</b><br><span class="muted" style="font-size:13px">Un bandeau sur Aujourd\'hui si la journée n\'est pas notée.</span></span></label>'+
+    '<div class="row"><button class="btn btn-line" id="rmOk" type="button">Enregistrer</button><button class="btn btn-line" data-close type="button">Fermer</button></div>');
+  var host=$('sheetHost');
+  host.querySelectorAll('#rmD .chip').forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true')})});
+  function read(){return {on:$('rmOn').checked,time:$('rmT').value||'18:00',days:Array.prototype.map.call(host.querySelectorAll('#rmD [aria-pressed="true"]'),function(b){return +b.dataset.d})}}
+  $('rmOk').addEventListener('click',function(){F.store.set(REM_KEY,read());close();render();toast('Rappel enregistré')});
+  $('rmCal').addEventListener('click',function(){
+    var x=read(); if(!x.days.length){toast('Choisissez au moins un jour');return}
+    F.store.set(REM_KEY,x);
+    var by=x.days.map(function(d){return ['SU','MO','TU','WE','TH','FR','SA'][d]}).join(','), start=addDays(today,1);
+    var ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pointe ta journee//FR','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:rappel-'+Date.now()+'@pointetajournee','DTSTAMP:'+icsDate(new Date(),'00:00')+'Z',
+      'DTSTART:'+icsDate(start,x.time),'DURATION:PT5M','RRULE:FREQ=WEEKLY;BYDAY='+by,'SUMMARY:Pointe ta journée : note tes heures','URL:'+location.origin+'/app.html',
+      'DESCRIPTION:Note ta journée dans Pointe ta journée : '+location.origin+'/app.html','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Note ta journée','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+    downloadFile('rappel-pointe-ta-journee.ics','text/calendar;charset=utf-8',ics); render(); toast('Rappel prêt à ajouter au calendrier');
+  });
+}
+function applyTheme(t){if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme')}
+function themeSheet(){
+  var cur0=F.store.get(THEME_KEY,'auto');
+  var close=sheet('<div><div class="eyebrow">Thème</div><h2 id="phT">Apparence</h2></div><div class="stack" style="gap:8px">'+
+    [['auto','Automatique','Comme votre téléphone'],['light','Clair',''],['dark','Sombre','Plus doux le soir']].map(function(o){return '<button type="button" class="opt" data-th="'+o[0]+'" aria-pressed="'+(cur0===o[0])+'"><span class="dot"></span><span class="tx"><b>'+o[1]+'</b>'+(o[2]?'<span>'+o[2]+'</span>':'')+'</span></button>'}).join('')+'</div>');
+  $('sheetHost').querySelectorAll('[data-th]').forEach(function(b){b.addEventListener('click',function(){F.store.set(THEME_KEY,b.dataset.th);applyTheme(b.dataset.th);close();render()})});
+}
+var BACKUP_KEYS=[KEY,'fdc-boss',REM_KEY,THEME_KEY,FREE_KEY];
+function backupSheet(){
+  var close=sheet('<div><div class="eyebrow">Sauvegarde</div><h2 id="phT">Gardez une copie de vos heures</h2></div>'+
+    '<p style="margin:0">Vos heures sont gardées sur ce téléphone. Téléchargez une sauvegarde de temps en temps (dans Fichiers, iCloud ou Google Drive) pour les retrouver sur un autre téléphone.</p>'+
+    '<button class="btn btn-blue block" id="bkDown" type="button">Télécharger ma sauvegarde</button>'+
+    '<label class="btn btn-line block" for="bkIn">Restaurer depuis un fichier<input type="file" id="bkIn" accept=".json,application/json" hidden></label>'+
+    '<div id="bkOut"></div><button class="btn btn-line block" data-close type="button">Fermer</button>');
+  $('bkDown').addEventListener('click',function(){
+    var o={app:'pointe-ta-journee',version:3,date:new Date().toISOString(),data:{}};
+    BACKUP_KEYS.forEach(function(k){var v=F.store.get(k,null);if(v!=null)o.data[k]=v});
+    downloadFile('sauvegarde-pointe-ta-journee-'+TODAY+'.json','application/json',JSON.stringify(o,null,1)); toast('Sauvegarde téléchargée');
+  });
+  $('bkIn').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; this.value=''; if(!f) return;
+    var rd=new FileReader(); rd.onload=function(){
+      var o=null; try{o=JSON.parse(rd.result)}catch(e){}
+      if(!o||o.app!=='pointe-ta-journee'||!o.data||!o.data[KEY]||!o.data[KEY].settings){$('bkOut').innerHTML='<div class="verdict ko"><span class="t">Fichier non reconnu</span><p>Choisissez un fichier de sauvegarde de Pointe ta journée.</p></div>';return}
+      var n=Object.keys(o.data[KEY].days||{}).length;
+      $('bkOut').innerHTML='<div class="verdict ok"><span class="t">'+n+' jour'+(n>1?'s':'')+' trouvé'+(n>1?'s':'')+'</span><p>Sauvegarde du '+esc(new Date(o.date).toLocaleDateString('fr-FR'))+'. Elle remplacera les heures de ce téléphone.</p><p><button class="btn btn-blue" id="bkYes" type="button" style="margin-top:6px">Restaurer</button></p></div>';
+      $('bkYes').addEventListener('click',function(){BACKUP_KEYS.forEach(function(k){if(o.data[k]!=null)F.store.set(k,o.data[k])});F.store.set(ONB_KEY,true);location.reload()});
+    }; rd.readAsText(f);
+  });
+}
+function installSheet(){
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  sheet('<div><div class="eyebrow">Installer</div><h2 id="phT">Pointe ta journée sur votre écran d\'accueil</h2></div>'+
+    (ios?'<ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px"><li>Ouvrez cette page dans <b>Safari</b>.</li><li>Touchez le bouton <b>Partager</b> (le carré avec une flèche vers le haut).</li><li>Choisissez <b>Sur l\'écran d\'accueil</b>, puis <b>Ajouter</b>.</li></ol>'
+        :'<ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px"><li>Ouvrez cette page dans <b>Chrome</b>.</li><li>Touchez le menu <b>⋮</b> en haut à droite.</li><li>Choisissez <b>Ajouter à l\'écran d\'accueil</b> ou <b>Installer l\'application</b>.</li></ol>')+
+    '<p class="muted" style="margin:0;font-size:14px">L\'appli s\'ouvre alors en plein écran, comme une appli normale. Vos heures restent les mêmes.</p><button class="btn btn-line block" data-close type="button">J\'ai compris</button>');
+}
+function aboutSheet(){
+  sheet('<div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><span class="logo" style="font-size:26px;flex-direction:column;gap:12px"><span class="mark" aria-hidden="true" style="width:84px;height:84px;border-radius:22px"></span><span id="phT">Pointe ta journée</span></span>'+
+    '<p class="muted" style="margin:0">Notez vos heures simplement et vérifiez que vous êtes payé pour chacune.</p><span class="muted" style="font-size:14px;font-weight:600">Version 3.0</span></div>'+
+    '<div class="group"><a class="ri" href="index.html" style="text-decoration:none"><span class="tx"><b>Le site</b><span>pointetajournee.vercel.app</span></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></a>'+
+    '<a class="ri" href="index.html#comment" style="text-decoration:none"><span class="tx"><b>Comment ça marche</b></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></a>'+
+    '<a class="ri" href="index.html#tarifs" style="text-decoration:none"><span class="tx"><b>Tarifs</b></span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></a></div>'+
+    '<p class="muted" style="margin:0;font-size:13px">Les calculs sont des estimations basées sur les règles générales du Code du travail. Votre convention collective peut prévoir mieux. Vos heures restent sur votre téléphone.</p>'+
+    '<button class="btn btn-line block" data-close type="button">Fermer</button>');
+}
+function share(){
+  var d={title:'Pointe ta journée',text:'Note tes heures et vérifie ta fiche de paie :',url:location.origin+'/'};
+  if(navigator.share){navigator.share(d).catch(function(){});return}
+  if(navigator.clipboard){navigator.clipboard.writeText(d.url).then(function(){toast('Lien copié')},function(){toast(d.url)})} else toast(d.url);
+}
+document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){
+  ({missions:function(){missionSheet(false)},majo:majoSheet,rappel:rappelSheet,theme:themeSheet,backup:backupSheet,install:installSheet,share:share,about:aboutSheet,onb:function(){showOnb(false)}})[b.dataset.open]();
+})});
+
 document.querySelectorAll('[data-group]').forEach(function(g){g.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;
   g.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
   if(g.dataset.group==='contrat')$('contratHint').textContent=F.CONTRATS[b.dataset.v].hint;})});
 $('setSave').addEventListener('click',function(){
   var g=function(id){return parseFloat(String($(id).value).replace(',','.'))};
   var sel=function(n){var b=document.querySelector('[data-group="'+n+'"] [aria-pressed="true"]');return b?b.dataset.v:S.settings[n]};
-  var v={contrat:sel('contrat'),statut:sel('statut'),rate:g('setRate'),weekly:g('setWeekly'),daily:g('setDaily'),panier:g('setPanier'),start:$('setStart').value,btp:$('setBtp').checked,cpBefore:S.settings.cpBefore||0};
+  var v={contrat:sel('contrat'),statut:sel('statut'),rate:g('setRate'),weekly:g('setWeekly'),daily:g('setDaily'),panier:g('setPanier'),start:$('setStart').value,btp:$('setBtp').checked};
   if([v.rate,v.weekly,v.daily,v.panier].some(function(x){return isNaN(x)||x<0})){toast('Un chiffre est vide ou incorrect');return}
-  S.settings=v;save();render();toast('Contrat enregistré');
+  Object.keys(v).forEach(function(k){S.settings[k]=v[k]}); save(); render(); toast('Contrat enregistré');
 });
 $('wipe').addEventListener('click',function(){$('wipeConfirm').hidden=false});
 $('wipeNo').addEventListener('click',function(){$('wipeConfirm').hidden=true});
-$('wipeYes').addEventListener('click',function(){S.days={};S.sample=false;save();$('wipeConfirm').hidden=true;render();toast('Tout est effacé')});
+$('wipeYes').addEventListener('click',function(){S.days={};S.sample=false;save();$('wipeConfirm').hidden=true;dirty=false;loadDay(cur);render();toast('Tout est effacé')});
+
+/* ---------- présentation au premier lancement ---------- */
+var onbC='cdi';
+function showOnb(first){
+  $('onb').hidden=false; $('onb1').hidden=false; $('onb2').hidden=true;
+  var st=S.settings; onbC=st.contrat;
+  $('onbRate').value=first?12.02:st.rate; $('onbWeekly').value=st.weekly; $('onbBtp').checked=isBtp(st);
+  document.querySelectorAll('[data-onb] .chip').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===onbC?'true':'false')});
+  $('onbSample').hidden=!first;
+  $('onb').scrollTop=0;
+}
+function closeOnb(){$('onb').hidden=true;F.store.set(ONB_KEY,true)}
+$('onbGo').addEventListener('click',function(){$('onb1').hidden=true;$('onb2').hidden=false;$('onb').scrollTop=0});
+$('onbBack').addEventListener('click',function(){$('onb2').hidden=true;$('onb1').hidden=false});
+document.querySelector('[data-onb]').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;onbC=b.dataset.v;this.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')})});
+function onbSettings(){
+  var r=parseFloat(String($('onbRate').value).replace(',','.')), w=parseFloat(String($('onbWeekly').value).replace(',','.')), st=S.settings;
+  if(!isNaN(r)&&r>0) st.rate=r;
+  if(!isNaN(w)&&w>0&&w!==st.weekly){st.weekly=w;st.daily=F.quarter(w/5)}
+  st.contrat=onbC; st.btp=$('onbBtp').checked;
+}
+$('onbDone').addEventListener('click',function(){
+  onbSettings(); if(S.sample){S.days={};S.sample=false} save(); closeOnb(); dirty=false; loadDay(TODAY); render(); go('today');
+});
+$('onbSample').addEventListener('click',function(){onbSettings();save();closeOnb();dirty=false;loadDay(TODAY);render();go('hist')});
 
 var tt; function toast(msg){var t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},2200)}
 
+/* ---------- démarrage ---------- */
+applyTheme(F.store.get(THEME_KEY,'auto'));
+loadDay(TODAY);
 render();
 bossAuto();
-var h=(location.hash||'').replace('#',''); if(['mois','sup','conges','paie','contrat'].indexOf(h)>=0) go(h);
+// anciens liens : #mois, #sup, #conges, #contrat
+var h=(location.hash||'').replace('#',''), OLD={mois:'hist',sup:'resume',conges:'resume',contrat:'reglages'};
+go(OLD[h]||(VIEWS.indexOf(h)>=0?h:'today'));
+if(firstRun&&!F.store.get(ONB_KEY,false)) showOnb(true); else F.store.set(ONB_KEY,true);
+// garde la journée en cours si on quitte l'appli sans enregistrer
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&dirty)saveDay(true)});
 })();
 </script>
 </body>

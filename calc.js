@@ -67,7 +67,8 @@
     return { s10: w.s10 * H_MOIS, s25: w.s25 * H_MOIS, s50: w.s50 * H_MOIS };
   }
 
-  /* p = { rate, weekly, daily, contrat, statut, btp, s10, s25, s50, absH, maladieJours, cpJours, paniers, panierAmt }
+  /* p = { rate, weekly, daily, contrat, statut, btp, s10, s25, s50, absH, maladieJours, cpJours, paniers, panierAmt, maj }
+     maj : majorations brutes en euros (nuit, dimanche, jours fériés)
      Renvoie le détail d'une paie mensuelle estimée, jusqu'au net avant impôt. */
   function computePay(p) {
     var rate = +p.rate || 0, weekly = +p.weekly || 35, daily = +p.daily || weekly / 5;
@@ -77,6 +78,7 @@
     var hsContratH = ch.s25 + ch.s50;
     var hsContrat = (ch.s25 * 1.25 + ch.s50 * 1.5) * rate;
     var hs = ((+p.s10 || 0) * 1.10 + (+p.s25 || 0) * 1.25 + (+p.s50 || 0) * 1.5) * rate;
+    var maj = +p.maj || 0;
     var abs = (+p.absH || 0) * rate;
     var malJ = +p.maladieJours || 0;
     var mal = malJ * daily * rate;
@@ -84,7 +86,7 @@
     var caisse = caisseCP(p.contrat, p.btp);
     var cpJ = +p.cpJours || 0;
     var cpRetenue = caisse ? cpJ * daily * rate : 0;
-    var sub = Math.max(0, base + hsContrat + hs - abs - mal - cpRetenue);
+    var sub = Math.max(0, base + hsContrat + hs + maj - abs - mal - cpRetenue);
     var icpRate = caisse ? 0 : c.icp;
     var precarite = sub * c.precarite;
     var icp = (sub + precarite) * icpRate;
@@ -112,7 +114,7 @@
     var net = brut - cotis + paniers + ijss;
     return {
       base: base, baseH: ch.baseH, hsContrat: hsContrat, hsContratH: hsContratH,
-      hs: hs, abs: abs, mal: mal, cpRetenue: cpRetenue, caisse: caisse, ijss: ijss, ijJours: ijJours,
+      hs: hs, maj: maj, abs: abs, mal: mal, cpRetenue: cpRetenue, caisse: caisse, ijss: ijss, ijJours: ijJours,
       precarite: precarite, icp: icp, finContrat: finContrat,
       brut: brut, cotis: cotis, cotisRate: brut > 0 ? cotis / brut : 0, paniers: paniers, net: net
     };
